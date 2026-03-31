@@ -9,9 +9,11 @@ export default function Rolam() {
       <section className="bg-cream py-20 px-6">
         <div className="max-w-3xl mx-auto">
           <div className="flex flex-col md:flex-row gap-12 items-start">
-            <div className="w-48 h-48 rounded-full bg-pistachio/40 flex-shrink-0 flex items-center justify-center mx-auto md:mx-0">
-              <span className="text-dark/30 text-sm text-center px-4">Fotó hamarosan</span>
-            </div>
+            <img
+              src="/reka.jpg"
+              alt="Réka"
+              className="w-48 h-48 rounded-full object-cover flex-shrink-0 mx-auto md:mx-0"
+            />
             <div>
               <h2 className="text-4xl text-peony mb-6">Szia!</h2>
               <h3 className="text-xl font-semibold mb-4">Üdvözöllek a mesevilágomban!</h3>
