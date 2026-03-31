@@ -1,13 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { products } from '@/lib/products';
+import { createClient } from '@supabase/supabase-js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 export async function POST(req: NextRequest) {
   const { productId } = await req.json();
 
-  const product = products.find((p) => p.id === productId);
+  const { data: product } = await supabase
+    .from('products')
+    .select('id, name, description, price')
+    .eq('id', productId)
+    .eq('active', true)
+    .single();
+
   if (!product) {
     return NextResponse.json({ error: 'Termék nem található.' }, { status: 404 });
   }
@@ -19,12 +30,12 @@ export async function POST(req: NextRequest) {
     line_items: [
       {
         price_data: {
-          currency: product.currency,
+          currency: 'huf',
           product_data: {
             name: product.name,
             description: product.description,
           },
-          unit_amount: product.price,
+          unit_amount: product.price * 100,
         },
         quantity: 1,
       },

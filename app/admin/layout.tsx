@@ -39,6 +39,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <nav className="flex-1 p-4 flex flex-col gap-1">
           {[
             { href: '/admin', label: 'Áttekintés' },
+            { href: '/admin/termekek', label: 'Termékek' },
             { href: '/admin/rendelesek', label: 'Rendelések' },
             { href: '/admin/uzenetek', label: 'Üzenetek' },
           ].map(({ href, label }) => (
