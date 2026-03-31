@@ -18,7 +18,7 @@ export default function Home() {
           Gyermekkönyv illusztrációk
         </p>
         <p className="max-w-md text-base text-dark/60 mb-10 leading-relaxed">
-          Meleg, karakteres rajzok gyerekkönyvekhez, mesevilágokhoz és digitális kiadványokhoz.
+          Egyedi, kedves rajzok gyerekkönyvekhez, mesevilágokhoz és digitális kiadványokhoz.
         </p>
         <div className="flex flex-col sm:flex-row gap-4">
           <Link
