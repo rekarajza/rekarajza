@@ -2,8 +2,7 @@ export default function Rolam() {
   return (
     <div>
       <section className="bg-fennel py-16 px-6 text-center">
-        <h1 className="text-4xl md:text-5xl mb-4">Rólam</h1>
-        <p className="text-dark/60 text-lg">Ismerj meg egy kicsit közelebb</p>
+        <h1 className="text-4xl md:text-5xl">Rólam</h1>
       </section>
 
       <section className="bg-cream py-20 px-6">

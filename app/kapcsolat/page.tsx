@@ -5,18 +5,33 @@ import { useState } from 'react';
 export default function Kapcsolat() {
   const [form, setForm] = useState({ nev: '', email: '', uzenet: '' });
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Brevo integration coming soon
-    setSent(true);
+    setLoading(true);
+    setError('');
+
+    const res = await fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form),
+    });
+
+    setLoading(false);
+
+    if (res.ok) {
+      setSent(true);
+    } else {
+      setError('Valami hiba történt. Kérlek próbáld újra.');
+    }
   };
 
   return (
     <div>
       <section className="bg-fennel py-16 px-6 text-center">
-        <h1 className="text-4xl md:text-5xl mb-4">Kapcsolat</h1>
-        <p className="text-dark/60 text-lg">Írj nekem bátran!</p>
+        <h1 className="text-4xl md:text-5xl">Kapcsolat</h1>
       </section>
 
       <section className="bg-cream py-20 px-6">
@@ -61,11 +76,13 @@ export default function Kapcsolat() {
                   placeholder="Miben segíthetek?"
                 />
               </div>
+              {error && <p className="text-peony text-sm">{error}</p>}
               <button
                 type="submit"
-                className="px-8 py-3 bg-fern text-white rounded-full font-semibold hover:bg-fern/80 transition-colors"
+                disabled={loading}
+                className="px-8 py-3 bg-fern text-white rounded-full font-semibold hover:bg-fern/80 transition-colors disabled:opacity-50"
               >
-                Küldés
+                {loading ? 'Küldés...' : 'Küldés'}
               </button>
             </form>
           )}

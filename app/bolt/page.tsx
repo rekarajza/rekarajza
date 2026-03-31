@@ -4,8 +4,7 @@ export default function Bolt() {
       <section className="bg-fennel py-16 px-6 text-center">
         <h1 className="text-4xl md:text-5xl mb-4">Bolt</h1>
         <p className="text-dark/60 text-lg max-w-xl mx-auto">
-          Digitális termékek — vásárlás után azonnal letölthető illusztrációk és rajzok.
-          Nyomtatható, felhasználható, örök.
+          Digitális termékek – vásárlás után azonnal letölthető illusztrációk.
         </p>
       </section>
 
