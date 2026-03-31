@@ -123,35 +123,12 @@ export default function Termekek() {
   };
 
   const handleDuplicate = async (p: Product) => {
-    let new_image_url = p.image_url;
-    let new_file_url = p.file_url;
-
-    if (p.image_url) {
-      try {
-        const path = p.image_url.split('/product-images/')[1];
-        const ext = path.split('.').pop();
-        const newPath = `thumbnails/${Date.now()}_copy.${ext}`;
-        await supabase.storage.from('product-images').copy(path, newPath);
-        const { data } = supabase.storage.from('product-images').getPublicUrl(newPath);
-        new_image_url = data.publicUrl;
-      } catch {}
-    }
-
-    if (p.file_url) {
-      try {
-        const ext = p.file_url.split('.').pop();
-        const newPath = `downloads/${Date.now()}_copy.${ext}`;
-        await supabase.storage.from('product-files').copy(p.file_url, newPath);
-        new_file_url = newPath;
-      } catch {}
-    }
-
     await supabase.from('products').insert({
       name: p.name + ' (másolat)',
       description: p.description,
       price: p.price,
-      image_url: new_image_url,
-      file_url: new_file_url,
+      image_url: null,
+      file_url: null,
       active: false,
     });
     load();
