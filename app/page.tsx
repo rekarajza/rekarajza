@@ -1,65 +1,80 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
+    <div>
+      {/* Hero */}
+      <section className="bg-cream min-h-[85vh] flex flex-col items-center justify-center text-center px-6 py-20">
         <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
+          src="/logo.png"
+          alt="Réka rajza"
+          width={280}
+          height={140}
+          className="object-contain mb-8"
           priority
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+        <p className="text-xl md:text-2xl text-dark/70 font-light tracking-wide mb-4">
+          Gyermekkönyv illusztrációk
+        </p>
+        <p className="max-w-md text-base text-dark/60 mb-10 leading-relaxed">
+          Meleg, karakteres rajzok gyerekkönyvekhez, mesevilágokhoz és digitális kiadványokhoz.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <Link
+            href="/galeria"
+            className="px-8 py-3 bg-fern text-white rounded-full font-semibold hover:bg-fern/80 transition-colors"
+          >
+            Galéria megtekintése
+          </Link>
+          <Link
+            href="/bolt"
+            className="px-8 py-3 border-2 border-fern text-fern rounded-full font-semibold hover:bg-fern hover:text-white transition-colors"
+          >
+            Bolt
+          </Link>
+        </div>
+      </section>
+
+      {/* Recent works */}
+      <section className="bg-fennel py-20 px-6">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-3xl md:text-4xl text-center mb-12">Friss munkák</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="aspect-square bg-pistachio/40 rounded-2xl flex items-center justify-center">
+                <span className="text-dark/30 text-sm">Hamarosan...</span>
+              </div>
+            ))}
+          </div>
+          <div className="text-center mt-10">
+            <Link
+              href="/galeria"
+              className="inline-block px-8 py-3 bg-fern text-white rounded-full font-semibold hover:bg-fern/80 transition-colors"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+              Az összes munka
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* About teaser */}
+      <section className="bg-cream py-20 px-6">
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl mb-6">Szia, Réka vagyok!</h2>
+          <p className="text-dark/70 leading-relaxed text-lg mb-8">
+            Gyermekkönyv illusztrátor vagyok, aki szereti az egyszerű vonalakat, meleg színeket
+            és a mesék varázsát. Rajzaim digitálisan készülnek, de minden egyes vonalban
+            ott van a kézzel rajzolt érzés.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href="/rolam"
+            className="inline-block px-8 py-3 border-2 border-fern text-fern rounded-full font-semibold hover:bg-fern hover:text-white transition-colors"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            Tudj meg többet rólam
+          </Link>
         </div>
-      </main>
+      </section>
     </div>
   );
 }
