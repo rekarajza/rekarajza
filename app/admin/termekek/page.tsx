@@ -33,6 +33,22 @@ export default function Termekek() {
   const [error, setError] = useState('');
   const imageRef = useRef<HTMLInputElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const descRef = useRef<HTMLTextAreaElement>(null);
+
+  const wrapSelection = (marker: string) => {
+    const el = descRef.current;
+    if (!el) return;
+    const start = el.selectionStart;
+    const end = el.selectionEnd;
+    const text = form.description;
+    const selected = text.slice(start, end);
+    const newText = text.slice(0, start) + marker + selected + marker + text.slice(end);
+    setForm(f => ({ ...f, description: newText }));
+    setTimeout(() => {
+      el.focus();
+      el.setSelectionRange(start + marker.length, end + marker.length);
+    }, 0);
+  };
 
   const load = async () => {
     const { data } = await supabase
@@ -106,6 +122,41 @@ export default function Termekek() {
     setSaving(false);
   };
 
+  const handleDuplicate = async (p: Product) => {
+    let new_image_url = p.image_url;
+    let new_file_url = p.file_url;
+
+    if (p.image_url) {
+      try {
+        const path = p.image_url.split('/product-images/')[1];
+        const ext = path.split('.').pop();
+        const newPath = `thumbnails/${Date.now()}_copy.${ext}`;
+        await supabase.storage.from('product-images').copy(path, newPath);
+        const { data } = supabase.storage.from('product-images').getPublicUrl(newPath);
+        new_image_url = data.publicUrl;
+      } catch {}
+    }
+
+    if (p.file_url) {
+      try {
+        const ext = p.file_url.split('.').pop();
+        const newPath = `downloads/${Date.now()}_copy.${ext}`;
+        await supabase.storage.from('product-files').copy(p.file_url, newPath);
+        new_file_url = newPath;
+      } catch {}
+    }
+
+    await supabase.from('products').insert({
+      name: p.name + ' (másolat)',
+      description: p.description,
+      price: p.price,
+      image_url: new_image_url,
+      file_url: new_file_url,
+      active: false,
+    });
+    load();
+  };
+
   const handleDelete = async (id: string) => {
     if (!confirm('Biztosan törlöd ezt a terméket?')) return;
     await supabase.from('products').delete().eq('id', id);
@@ -151,6 +202,7 @@ export default function Termekek() {
                   {p.active ? 'Aktív' : 'Rejtett'}
                 </button>
                 <button onClick={() => openEdit(p)} className="text-sm text-dark/50 hover:text-dark transition-colors">Szerkesztés</button>
+                <button onClick={() => handleDuplicate(p)} className="text-sm text-dark/50 hover:text-dark transition-colors">Duplikálás</button>
                 <button onClick={() => handleDelete(p.id)} className="text-sm text-peony hover:text-peony/70 transition-colors">Törlés</button>
               </div>
             </div>
@@ -175,12 +227,20 @@ export default function Termekek() {
               </div>
               <div>
                 <label className="text-sm text-dark/60 block mb-1">Leírás</label>
+                <div className="flex gap-2 mb-1">
+                  <button type="button" onClick={() => wrapSelection('**')} className="px-3 py-1 border border-fennel rounded-lg text-sm font-bold hover:bg-fennel transition-colors" title="Félkövér">B</button>
+                  <button type="button" onClick={() => wrapSelection('*')} className="px-3 py-1 border border-fennel rounded-lg text-sm italic hover:bg-fennel transition-colors" title="Dőlt">I</button>
+                  <button type="button" onClick={() => wrapSelection('***')} className="px-3 py-1 border border-fennel rounded-lg text-sm font-bold italic hover:bg-fennel transition-colors" title="Félkövér + dőlt">B+I</button>
+                </div>
                 <textarea
+                  ref={descRef}
                   value={form.description}
                   onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-                  rows={3}
+                  rows={5}
                   className="w-full border border-fennel rounded-xl px-4 py-2 text-sm outline-none focus:border-fern resize-none"
+                  placeholder="Jelölj ki szöveget, majd kattints B vagy I a formázáshoz."
                 />
+                <p className="text-xs text-dark/40 mt-1">Új sor = Enter. Jelölj ki szöveget → B (félkövér) vagy I (dőlt).</p>
               </div>
               <div>
                 <label className="text-sm text-dark/60 block mb-1">Ár (Ft) *</label>
