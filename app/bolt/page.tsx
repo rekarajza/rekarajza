@@ -47,7 +47,7 @@ export default function Bolt() {
                   disabled={loading === product.id}
                   className="mt-auto w-full py-2 bg-fern text-white rounded-full text-sm font-semibold hover:bg-fern/80 transition-colors disabled:opacity-50"
                 >
-                  {loading === product.id ? 'Töltés...' : 'Megvásárlom'}
+                  {loading === product.id ? 'Töltés...' : 'Kosárba'}
                 </button>
               </div>
             </div>
