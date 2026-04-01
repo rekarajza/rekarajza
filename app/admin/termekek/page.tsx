@@ -301,15 +301,60 @@ export default function Termekek() {
                 />
               </div>
               <div>
-                <label className="text-sm text-dark/60 block mb-1">Címkék (vesszővel elválasztva)</label>
+                <label className="text-sm text-dark/60 block mb-1">Címkék</label>
+                {/* Jelenlegi tagek pill-ként */}
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {form.tagsInput.split(',').map(t => t.trim()).filter(Boolean).map(tag => (
+                    <span key={tag} className="flex items-center gap-1 bg-fern/15 text-fern text-xs font-semibold px-3 py-1 rounded-full">
+                      {tag}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const current = form.tagsInput.split(',').map(t => t.trim()).filter(Boolean);
+                          setForm(f => ({ ...f, tagsInput: current.filter(t => t !== tag).join(', ') }));
+                        }}
+                        className="ml-1 text-fern/60 hover:text-peony transition-colors leading-none"
+                      >×</button>
+                    </span>
+                  ))}
+                </div>
+                {/* Meglévő tagek ajánlása */}
+                {Array.from(new Set(products.flatMap(p => p.tags ?? []))).filter(t => !form.tagsInput.split(',').map(x => x.trim()).includes(t)).length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mb-2">
+                    {Array.from(new Set(products.flatMap(p => p.tags ?? []))).filter(t => !form.tagsInput.split(',').map(x => x.trim()).includes(t)).map(tag => (
+                      <button
+                        key={tag}
+                        type="button"
+                        onClick={() => {
+                          const current = form.tagsInput.split(',').map(t => t.trim()).filter(Boolean);
+                          setForm(f => ({ ...f, tagsInput: [...current, tag].join(', ') }));
+                        }}
+                        className="bg-fennel hover:bg-pistachio text-dark/60 text-xs px-3 py-1 rounded-full transition-colors"
+                      >
+                        + {tag}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {/* Új tag gépelése */}
                 <input
                   type="text"
-                  value={form.tagsInput}
-                  onChange={e => setForm(f => ({ ...f, tagsInput: e.target.value }))}
+                  placeholder="Új címke hozzáadása, majd Enter..."
                   className="w-full border border-fennel rounded-xl px-4 py-2 text-sm outline-none focus:border-fern"
-                  placeholder="pl. Illusztráció, Ősz, Karácsonyi"
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' || e.key === ',') {
+                      e.preventDefault();
+                      const val = (e.target as HTMLInputElement).value.trim();
+                      if (!val) return;
+                      const current = form.tagsInput.split(',').map(t => t.trim()).filter(Boolean);
+                      if (!current.includes(val)) {
+                        setForm(f => ({ ...f, tagsInput: [...current, val].join(', ') }));
+                      }
+                      (e.target as HTMLInputElement).value = '';
+                    }
+                  }}
                 />
-                <p className="text-xs text-dark/40 mt-1">Több címke esetén vesszővel válaszd el őket.</p>
+                <p className="text-xs text-dark/40 mt-1">Kattints a meglévőkre, vagy gépelj újat és nyomj Entert.</p>
               </div>
               <div>
                 <label className="text-sm font-semibold text-dark block mb-2">Borítókép (ez jelenik meg a boltban)</label>
