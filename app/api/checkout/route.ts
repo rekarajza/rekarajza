@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
 
   const { data: products } = await supabase
     .from('products')
-    .select('id, name, price, image_url')
+    .select('id, name, price, sale_price, image_url')
     .in('id', items)
     .eq('active', true);
 
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
         name: product.name,
         ...(product.image_url ? { images: [product.image_url] } : {}),
       },
-      unit_amount: product.price * 100,
+      unit_amount: (product.sale_price ?? product.price) * 100,
     },
     quantity: 1,
   }));

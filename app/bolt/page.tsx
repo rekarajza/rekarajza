@@ -14,6 +14,7 @@ type Product = {
   name: string;
   description: string;
   price: number;
+  sale_price: number | null;
   image_url: string | null;
   tags: string[];
 };
@@ -28,7 +29,7 @@ export default function Bolt() {
   useEffect(() => {
     supabase
       .from('products')
-      .select('id, name, description, price, image_url, tags')
+      .select('id, name, description, price, sale_price, image_url, tags')
       .eq('active', true)
       .order('sort_order', { ascending: true })
       .then(({ data }) => {
@@ -97,7 +98,16 @@ export default function Bolt() {
                 <div className="p-5 flex flex-col flex-1">
                   <h3 className="font-semibold text-dark mb-1">{product.name}</h3>
                   <p className="text-dark/50 text-sm mb-2">Digitális letöltés</p>
-                  <p className="mb-4"><span className="bg-honey text-dark font-bold text-sm px-3 py-1 rounded-full">{product.price.toLocaleString('hu-HU')} Ft</span></p>
+                  <div className="mb-4 flex items-center gap-2 flex-wrap">
+                    {product.sale_price ? (
+                      <>
+                        <span className="bg-peony text-white font-bold text-sm px-3 py-1 rounded-full">{product.sale_price.toLocaleString('hu-HU')} Ft</span>
+                        <span className="text-dark/40 text-sm line-through">{product.price.toLocaleString('hu-HU')} Ft</span>
+                      </>
+                    ) : (
+                      <span className="bg-honey text-dark font-bold text-sm px-3 py-1 rounded-full">{product.price.toLocaleString('hu-HU')} Ft</span>
+                    )}
+                  </div>
                   <button
                     onClick={(e) => { e.stopPropagation(); addItem(product); }}
                     className={`mt-auto w-full py-2 rounded-full text-sm font-semibold transition-colors ${
@@ -146,7 +156,16 @@ export default function Bolt() {
                     ✕
                   </button>
                 </div>
-                <p className="mb-6"><span className="bg-honey text-dark font-bold text-xl px-4 py-1.5 rounded-full">{selected.price.toLocaleString('hu-HU')} Ft</span></p>
+                <div className="mb-6 flex items-center gap-3 flex-wrap">
+                  {selected.sale_price ? (
+                    <>
+                      <span className="bg-peony text-white font-bold text-xl px-4 py-1.5 rounded-full">{selected.sale_price.toLocaleString('hu-HU')} Ft</span>
+                      <span className="text-dark/40 text-lg line-through">{selected.price.toLocaleString('hu-HU')} Ft</span>
+                    </>
+                  ) : (
+                    <span className="bg-honey text-dark font-bold text-xl px-4 py-1.5 rounded-full">{selected.price.toLocaleString('hu-HU')} Ft</span>
+                  )}
+                </div>
                 {selected.description && (
                   <div className="text-dark/70 text-sm leading-relaxed space-y-3 mb-8">
                     {selected.description.split('\n').map((line, i) => {

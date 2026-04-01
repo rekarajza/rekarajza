@@ -13,6 +13,7 @@ type Product = {
   name: string;
   description: string;
   price: number;
+  sale_price: number | null;
   image_url: string | null;
   file_url: string | null;
   active: boolean;
@@ -25,13 +26,14 @@ type FormState = {
   name: string;
   description: string;
   price: number;
+  sale_price: string;
   image_url: string;
   file_url: string;
   active: boolean;
   tagsInput: string;
 };
 
-const empty: FormState = { name: '', description: '', price: 3500, image_url: '', file_url: '', active: true, tagsInput: 'Illusztráció' };
+const empty: FormState = { name: '', description: '', price: 3500, sale_price: '', image_url: '', file_url: '', active: true, tagsInput: 'Illusztráció' };
 
 export default function Termekek() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -105,7 +107,7 @@ export default function Termekek() {
 
   const openEdit = (p: Product) => {
     setEditing(p);
-    setForm({ name: p.name, description: p.description ?? '', price: p.price, image_url: p.image_url ?? '', file_url: p.file_url ?? '', active: p.active, tagsInput: (p.tags ?? []).join(', ') });
+    setForm({ name: p.name, description: p.description ?? '', price: p.price, sale_price: p.sale_price ? String(p.sale_price) : '', image_url: p.image_url ?? '', file_url: p.file_url ?? '', active: p.active, tagsInput: (p.tags ?? []).join(', ') });
     setImageFile(null);
     setDownloadFile(null);
     setError('');
@@ -140,7 +142,7 @@ export default function Termekek() {
       }
 
       const tagsArray = form.tagsInput.split(',').map(t => t.trim()).filter(Boolean);
-      const payload = { name: form.name, description: form.description, price: form.price, image_url, file_url, active: form.active, tags: tagsArray };
+      const payload = { name: form.name, description: form.description, price: form.price, sale_price: form.sale_price ? Number(form.sale_price) : null, image_url, file_url, active: form.active, tags: tagsArray };
 
       if (editing) {
         await supabase.from('products').update(payload).eq('id', editing.id);
@@ -292,13 +294,26 @@ export default function Termekek() {
                 <p className="text-xs text-dark/40 mt-1">Új sor = Enter. Jelölj ki szöveget → B (félkövér) vagy I (dőlt).</p>
               </div>
               <div>
-                <label className="text-sm text-dark/60 block mb-1">Ár (Ft) *</label>
+                <label className="text-sm text-dark/60 block mb-1">Eredeti ár (Ft) *</label>
                 <input
                   type="number"
                   value={form.price}
                   onChange={e => setForm(f => ({ ...f, price: Number(e.target.value) }))}
                   className="w-full border border-fennel rounded-xl px-4 py-2 text-sm outline-none focus:border-fern"
                 />
+              </div>
+              <div>
+                <label className="text-sm text-dark/60 block mb-1">Akciós ár (Ft) — hagyd üresen ha nincs akció</label>
+                <input
+                  type="number"
+                  value={form.sale_price}
+                  onChange={e => setForm(f => ({ ...f, sale_price: e.target.value }))}
+                  className="w-full border border-peony/40 rounded-xl px-4 py-2 text-sm outline-none focus:border-peony"
+                  placeholder="pl. 2490"
+                />
+                {form.sale_price && Number(form.sale_price) > 0 && (
+                  <p className="text-xs text-peony mt-1">🏷️ Akció: {Number(form.sale_price).toLocaleString('hu-HU')} Ft az eredeti {form.price.toLocaleString('hu-HU')} Ft helyett</p>
+                )}
               </div>
               <div>
                 <label className="text-sm text-dark/60 block mb-1">Címkék</label>
