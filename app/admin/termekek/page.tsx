@@ -21,14 +21,24 @@ type Product = {
   tags: string[];
 };
 
-const empty = { name: '', description: '', price: 3500, image_url: '', file_url: '', active: true, tags: 'Illusztráció' };
+type FormState = {
+  name: string;
+  description: string;
+  price: number;
+  image_url: string;
+  file_url: string;
+  active: boolean;
+  tagsInput: string;
+};
+
+const empty: FormState = { name: '', description: '', price: 3500, image_url: '', file_url: '', active: true, tagsInput: 'Illusztráció' };
 
 export default function Termekek() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
-  const [form, setForm] = useState(empty);
+  const [form, setForm] = useState<FormState>(empty);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [downloadFile, setDownloadFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
@@ -95,7 +105,7 @@ export default function Termekek() {
 
   const openEdit = (p: Product) => {
     setEditing(p);
-    setForm({ name: p.name, description: p.description ?? '', price: p.price, image_url: p.image_url ?? '', file_url: p.file_url ?? '', active: p.active, tags: (p.tags ?? []).join(', ') });
+    setForm({ name: p.name, description: p.description ?? '', price: p.price, image_url: p.image_url ?? '', file_url: p.file_url ?? '', active: p.active, tagsInput: (p.tags ?? []).join(', ') });
     setImageFile(null);
     setDownloadFile(null);
     setError('');
@@ -129,7 +139,7 @@ export default function Termekek() {
         file_url = await uploadFile(downloadFile, 'product-files', 'downloads') as string;
       }
 
-      const tagsArray = (form.tags as unknown as string).split(',').map((t: string) => t.trim()).filter(Boolean);
+      const tagsArray = form.tagsInput.split(',').map(t => t.trim()).filter(Boolean);
       const payload = { name: form.name, description: form.description, price: form.price, image_url, file_url, active: form.active, tags: tagsArray };
 
       if (editing) {
@@ -294,8 +304,8 @@ export default function Termekek() {
                 <label className="text-sm text-dark/60 block mb-1">Címkék (vesszővel elválasztva)</label>
                 <input
                   type="text"
-                  value={form.tags as unknown as string}
-                  onChange={e => setForm(f => ({ ...f, tags: e.target.value as unknown as string[] }))}
+                  value={form.tagsInput}
+                  onChange={e => setForm(f => ({ ...f, tagsInput: e.target.value }))}
                   className="w-full border border-fennel rounded-xl px-4 py-2 text-sm outline-none focus:border-fern"
                   placeholder="pl. Illusztráció, Ősz, Karácsonyi"
                 />
