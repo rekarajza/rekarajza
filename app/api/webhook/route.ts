@@ -28,7 +28,7 @@ async function sendDownloadEmail(email: string, productName: string, downloadUrl
         <div style="font-family: Georgia, serif; max-width: 520px; margin: 0 auto; color: #2C2C2C;">
           <h2 style="color: #768E78;">Köszönöm a vásárlást! 🌿</h2>
           <p>Kedves Vásárló,</p>
-          <p>Köszönöm, hogy megvásároltad az alábbi illusztrációt/illusztrációkat:</p>
+          <p>Köszönöm, hogy vásárlásoddal támogatod a vállalkozásomat! Remélem örömöd leled a rajzokban!</p>
           <p><strong>${productName}</strong></p>
           <p>Az alábbi linkekre kattintva letöltheted a fájlokat:</p>
           <div style="margin: 24px 0;">
