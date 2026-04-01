@@ -58,6 +58,7 @@ export async function POST(req: NextRequest) {
     payment_method_types: ['card'],
     line_items: lineItems,
     mode: 'payment',
+    billing_address_collection: 'required',
     success_url: `${baseUrl}/bolt/sikeres?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${baseUrl}/bolt`,
     metadata: {

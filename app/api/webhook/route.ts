@@ -61,11 +61,17 @@ export async function POST(req: NextRequest) {
     const productNames = session.metadata?.productNames ?? '';
     const productIds: string[] = JSON.parse(session.metadata?.productIds ?? '[]');
 
+    const billing = session.customer_details;
     await supabase.from('orders').insert({
       email,
       product_name: productNames,
       amount: session.amount_total ?? 0,
       status: 'paid',
+      billing_name: billing?.name ?? '',
+      billing_address: billing?.address?.line1 ?? '',
+      billing_city: billing?.address?.city ?? '',
+      billing_zip: billing?.address?.postal_code ?? '',
+      billing_country: billing?.address?.country ?? '',
     });
 
     if (productIds.length > 0 && email) {
