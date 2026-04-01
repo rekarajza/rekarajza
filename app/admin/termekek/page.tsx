@@ -17,6 +17,7 @@ type Product = {
   file_url: string | null;
   active: boolean;
   created_at: string;
+  sort_order: number;
 };
 
 const empty = { name: '', description: '', price: 3500, image_url: '', file_url: '', active: true };
@@ -54,9 +55,22 @@ export default function Termekek() {
     const { data } = await supabase
       .from('products')
       .select('*')
-      .order('created_at', { ascending: false });
+      .order('sort_order', { ascending: true });
     setProducts(data ?? []);
     setLoading(false);
+  };
+
+  const moveProduct = async (index: number, direction: 'up' | 'down') => {
+    const swapIndex = direction === 'up' ? index - 1 : index + 1;
+    if (swapIndex < 0 || swapIndex >= products.length) return;
+
+    const a = products[index];
+    const b = products[swapIndex];
+
+    await supabase.from('products').update({ sort_order: b.sort_order }).eq('id', a.id);
+    await supabase.from('products').update({ sort_order: a.sort_order }).eq('id', b.id);
+
+    load();
   };
 
   useEffect(() => { load(); }, []);
@@ -160,8 +174,28 @@ export default function Termekek() {
         <div className="bg-white rounded-2xl p-10 text-center text-dark/40">Még nincsenek termékek.</div>
       ) : (
         <div className="flex flex-col gap-3">
-          {products.map((p) => (
+          {products.map((p, index) => (
             <div key={p.id} className="bg-white rounded-2xl p-5 shadow-sm flex items-center gap-5">
+              {/* Sorrend gombok */}
+              <div className="flex flex-col gap-1">
+                <button
+                  onClick={() => moveProduct(index, 'up')}
+                  disabled={index === 0}
+                  className="w-7 h-7 flex items-center justify-center rounded-lg bg-fennel hover:bg-fennel/60 disabled:opacity-20 transition-colors text-dark text-xs"
+                  title="Feljebb"
+                >
+                  ▲
+                </button>
+                <button
+                  onClick={() => moveProduct(index, 'down')}
+                  disabled={index === products.length - 1}
+                  className="w-7 h-7 flex items-center justify-center rounded-lg bg-fennel hover:bg-fennel/60 disabled:opacity-20 transition-colors text-dark text-xs"
+                  title="Lejjebb"
+                >
+                  ▼
+                </button>
+              </div>
+
               {p.image_url ? (
                 <img src={p.image_url} alt={p.name} className="w-16 h-16 object-cover rounded-xl" />
               ) : (

@@ -28,7 +28,7 @@ export default function Bolt() {
       .from('products')
       .select('id, name, description, price, image_url')
       .eq('active', true)
-      .order('created_at', { ascending: true })
+      .order('sort_order', { ascending: true })
       .then(({ data }) => {
         setProducts(data ?? []);
         setLoading(false);
