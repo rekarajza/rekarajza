@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function Footer() {
   return (
     <footer className="bg-fennel mt-auto">
@@ -5,6 +7,8 @@ export default function Footer() {
         <p className="text-sm text-dark/70">© {new Date().getFullYear()} Réka rajza. Minden jog fenntartva.</p>
         <div className="flex gap-6 text-sm text-dark/70">
           <a href="mailto:rekarajza@gmail.com" className="hover:text-peony transition-colors">rekarajza@gmail.com</a>
+          <Link href="/aszf" className="hover:text-peony transition-colors">ÁSZF</Link>
+          <Link href="/adatkezeles" className="hover:text-peony transition-colors">Adatkezelés</Link>
         </div>
       </div>
     </footer>
