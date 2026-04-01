@@ -5,7 +5,7 @@ import { useCart } from '@/lib/cart';
 import { useRouter } from 'next/navigation';
 
 const TIP_OPTIONS = [
-  { label: 'Nem most', value: 0 },
+  { label: 'Most nem', value: 0 },
   { label: '5%', value: 5 },
   { label: '10%', value: 10 },
   { label: '15%', value: 15 },
@@ -98,7 +98,7 @@ export default function CartDrawer() {
                         : 'border-fennel text-dark/60 hover:border-fern'
                     }`}
                   >
-                    {opt.value === 0 ? 'Nem most' : `${opt.label} (${Math.round(subtotal * opt.value / 100).toLocaleString('hu-HU')} Ft)`}
+                    {opt.value === 0 ? 'Most nem' : `${opt.label} (${Math.round(subtotal * opt.value / 100).toLocaleString('hu-HU')} Ft)`}
                   </button>
                 ))}
                 <button
