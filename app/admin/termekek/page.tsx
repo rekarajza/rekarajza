@@ -168,14 +168,37 @@ export default function Termekek() {
     load();
   };
 
+  const [filterCategory, setFilterCategory] = useState('Összes');
+  const adminCategories = ['Összes', ...Array.from(new Set(products.map(p => p.category ?? 'Illusztráció')))];
+  const filteredProducts = filterCategory === 'Összes' ? products : products.filter(p => (p.category ?? 'Illusztráció') === filterCategory);
+
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl">Termékek</h1>
         <button onClick={openNew} className="bg-fern text-white px-5 py-2 rounded-xl text-sm font-semibold hover:bg-fern/80 transition-colors">
           + Új termék
         </button>
       </div>
+
+      {/* Kategória szűrők */}
+      {!loading && adminCategories.length > 2 && (
+        <div className="flex flex-wrap gap-2 mb-6">
+          {adminCategories.map(cat => (
+            <button
+              key={cat}
+              onClick={() => setFilterCategory(cat)}
+              className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
+                filterCategory === cat
+                  ? 'bg-fern text-white'
+                  : 'bg-white text-dark/60 hover:bg-fennel border border-fennel'
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      )}
 
       {loading ? (
         <p className="text-dark/50">Betöltés...</p>
@@ -183,13 +206,13 @@ export default function Termekek() {
         <div className="bg-white rounded-2xl p-10 text-center text-dark/40">Még nincsenek termékek.</div>
       ) : (
         <div className="flex flex-col gap-3">
-          {products.map((p, index) => (
+          {filteredProducts.map((p, index) => (
             <div
               key={p.id}
               draggable
-              onDragStart={() => setDragIndex(index)}
-              onDragOver={(e) => { e.preventDefault(); setDragOverIndex(index); }}
-              onDrop={() => { if (dragIndex !== null) handleDragEnd(dragIndex, index); }}
+              onDragStart={() => setDragIndex(products.indexOf(p))}
+              onDragOver={(e) => { e.preventDefault(); setDragOverIndex(products.indexOf(p)); }}
+              onDrop={() => { if (dragIndex !== null) handleDragEnd(dragIndex, products.indexOf(p)); }}
               onDragEnd={() => { setDragIndex(null); setDragOverIndex(null); }}
               className={`bg-white rounded-2xl p-5 shadow-sm flex items-center gap-5 transition-all cursor-grab active:cursor-grabbing ${
                 dragOverIndex === index && dragIndex !== index ? 'ring-2 ring-fern scale-[1.01]' : ''
