@@ -39,7 +39,7 @@ export default function Bolt() {
 
   return (
     <div>
-      <section className="bg-fennel py-16 px-6 text-center">
+      <section className="bg-pistachio py-16 px-6 text-center">
         <h1 className="text-4xl md:text-5xl mb-4">Bolt</h1>
         <p className="text-dark/60 text-lg max-w-xl mx-auto">
           Digitális termékek – vásárlás után azonnal letölthető illusztrációk.
@@ -71,7 +71,7 @@ export default function Bolt() {
                 <div className="p-5 flex flex-col flex-1">
                   <h3 className="font-semibold text-dark mb-1">{product.name}</h3>
                   <p className="text-dark/50 text-sm mb-2">Digitális letöltés</p>
-                  <p className="text-fern font-bold text-lg mb-4">{product.price.toLocaleString('hu-HU')} Ft</p>
+                  <p className="mb-4"><span className="bg-honey text-dark font-bold text-sm px-3 py-1 rounded-full">{product.price.toLocaleString('hu-HU')} Ft</span></p>
                   <button
                     onClick={(e) => { e.stopPropagation(); addItem(product); }}
                     className={`mt-auto w-full py-2 rounded-full text-sm font-semibold transition-colors ${
@@ -119,7 +119,7 @@ export default function Bolt() {
                     ✕
                   </button>
                 </div>
-                <p className="text-fern font-bold text-2xl mb-6">{selected.price.toLocaleString('hu-HU')} Ft</p>
+                <p className="mb-6"><span className="bg-honey text-dark font-bold text-xl px-4 py-1.5 rounded-full">{selected.price.toLocaleString('hu-HU')} Ft</span></p>
                 {selected.description && (
                   <div className="text-dark/70 text-sm leading-relaxed space-y-3 mb-8">
                     {selected.description.split('\n').map((line, i) => {
