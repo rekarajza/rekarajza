@@ -24,6 +24,7 @@ export default function Bolt() {
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Product | null>(null);
   const [activeCategory, setActiveCategory] = useState('Összes');
+  const [lightbox, setLightbox] = useState<string | null>(null);
   const { addItem, items } = useCart();
 
   useEffect(() => {
@@ -136,9 +137,20 @@ export default function Bolt() {
             className="bg-white rounded-2xl max-w-4xl w-full overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[90vh]"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="md:w-1/2 bg-fennel min-h-64 md:min-h-0">
+            <div className="md:w-1/2 bg-fennel min-h-64 md:min-h-0 overflow-hidden cursor-zoom-in relative group"
+              onClick={() => selected.image_url && setLightbox(selected.image_url)}
+            >
               {selected.image_url ? (
-                <img src={selected.image_url} alt={selected.name} className="w-full h-full object-cover" />
+                <>
+                  <img
+                    src={selected.image_url}
+                    alt={selected.name}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-125"
+                  />
+                  <div className="absolute inset-0 flex items-end justify-center pb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                    <span className="bg-dark/60 text-white text-xs px-3 py-1 rounded-full">🔍 Kattints a nagyításhoz</span>
+                  </div>
+                </>
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
                   <span className="text-dark/30 text-sm">Nincs kép</span>
@@ -199,6 +211,26 @@ export default function Bolt() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Lightbox */}
+      {lightbox && (
+        <div
+          className="fixed inset-0 bg-dark/90 flex items-center justify-center z-[60] p-4 cursor-zoom-out"
+          onClick={() => setLightbox(null)}
+        >
+          <button
+            className="absolute top-4 right-4 text-white/70 hover:text-white text-3xl leading-none"
+            onClick={() => setLightbox(null)}
+          >✕</button>
+          <img
+            src={lightbox}
+            alt=""
+            className="max-w-full max-h-full object-contain rounded-xl"
+            style={{ touchAction: 'pinch-zoom' }}
+            onClick={e => e.stopPropagation()}
+          />
         </div>
       )}
     </div>
