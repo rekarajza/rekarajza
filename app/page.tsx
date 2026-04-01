@@ -1,78 +1,46 @@
-import Image from "next/image";
-import Link from "next/link";
+const images = [
+  { src: "/galeria/1.jpg",    alt: "Erdei tábortűz illusztráció" },
+  { src: "/galeria/14.jpg",   alt: "Virágos botanikai illusztráció" },
+  { src: "/galeria/7.jpg",    alt: "Lány rózsaszín konyhával" },
+  { src: "/galeria/22.jpg",   alt: "Színes könyvborítók" },
+  { src: "/galeria/3.jpeg",   alt: "Téli éjszakai könyvborító" },
+  { src: "/galeria/15.jpg",   alt: "Kék madár növényekkel" },
+  { src: "/galeria/9.jpg",    alt: "Pasztell állatos illusztráció" },
+  { src: "/galeria/6.jpg",    alt: "Lány berkenye fánál" },
+  { src: "/galeria/12.png",   alt: "Álmos Mackók könyvek" },
+  { src: "/galeria/2.jpeg",   alt: "Kék madárház őszi levelekkel" },
+  { src: "/galeria/11.jpg",   alt: "Kék hátterű kenyér és teáskanna" },
+  { src: "/galeria/4.jpg",    alt: "Téli mesekönyv lapok" },
+  { src: "/galeria/13.jpg",   alt: "Álmos Mackók könyvborító" },
+  { src: "/galeria/8.jpg",    alt: "Gyerekek főznek együtt" },
+  { src: "/galeria/20.jpg",   alt: "Lány piros ruhában tulipánok között" },
+  { src: "/galeria/5.jpg",    alt: "Finomság sárga board book" },
+  { src: "/galeria/10.jpg",   alt: "Halloween tök és madárijesztő" },
+  { src: "/galeria/16.jpg",   alt: "Lamo csoki csomagoló illusztrációk" },
+  { src: "/galeria/19.jpg",   alt: "Sárga buszos interaktív könyv" },
+  { src: "/galeria/21.jpg",   alt: "Gyermekkönyvek gyűjteménye" },
+  { src: "/galeria/18.jpg",   alt: "Könyvek egymáson" },
+  { src: "/galeria/17.jpg",   alt: "Színes flash kártyák állatokkal" },
+];
 
 export default function Home() {
   return (
     <div>
-      {/* Hero */}
-      <section className="bg-cream min-h-[85vh] flex flex-col items-center justify-center text-center px-6 py-20">
-        <Image
-          src="/logo.png"
-          alt="Réka rajza"
-          width={280}
-          height={140}
-          className="object-contain mb-8"
-          priority
-        />
-        <p className="text-xl md:text-2xl text-dark/70 font-light tracking-wide mb-4">
-          Gyermekkönyv illusztrációk
-        </p>
-        <p className="max-w-md text-base text-dark/60 mb-10 leading-relaxed">
-          Egyedi, kedves rajzok gyerekkönyvekhez, mesevilágokhoz és digitális kiadványokhoz.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4">
-          <Link
-            href="/galeria"
-            className="px-8 py-3 bg-fern text-white rounded-full font-semibold hover:bg-fern/80 transition-colors"
-          >
-            Galéria megtekintése
-          </Link>
-          <Link
-            href="/bolt"
-            className="px-8 py-3 border-2 border-fern text-fern rounded-full font-semibold hover:bg-fern hover:text-white transition-colors"
-          >
-            Bolt
-          </Link>
-        </div>
-      </section>
-
-      {/* Recent works */}
-      <section className="bg-fennel py-20 px-6">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl md:text-4xl text-center mb-12">Friss munkák</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="aspect-square bg-pistachio/40 rounded-2xl flex items-center justify-center">
-                <span className="text-dark/30 text-sm">Hamarosan...</span>
-              </div>
-            ))}
-          </div>
-          <div className="text-center mt-10">
-            <Link
-              href="/galeria"
-              className="inline-block px-8 py-3 bg-fern text-white rounded-full font-semibold hover:bg-fern/80 transition-colors"
+      <section className="bg-cream py-16 px-6">
+        <div className="max-w-6xl mx-auto columns-1 sm:columns-2 md:columns-3 gap-4 space-y-4">
+          {images.map((img, i) => (
+            <div
+              key={i}
+              className="break-inside-avoid overflow-hidden rounded-2xl group cursor-pointer"
             >
-              Az összes munka
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* About teaser */}
-      <section className="bg-cream py-20 px-6">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl mb-6">Szia, Réka vagyok!</h2>
-          <p className="text-dark/70 leading-relaxed text-lg mb-8">
-            Gyermekkönyv illusztrátor vagyok, aki szereti az egyszerű vonalakat, meleg színeket
-            és a mesék varázsát. Rajzaim digitálisan készülnek, de minden egyes vonalban
-            ott van a kézzel rajzolt érzés.
-          </p>
-          <Link
-            href="/rolam"
-            className="inline-block px-8 py-3 border-2 border-fern text-fern rounded-full font-semibold hover:bg-fern hover:text-white transition-colors"
-          >
-            Tudj meg többet rólam
-          </Link>
+              <img
+                src={img.src}
+                alt={img.alt}
+                className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                loading={i < 6 ? "eager" : "lazy"}
+              />
+            </div>
+          ))}
         </div>
       </section>
     </div>
