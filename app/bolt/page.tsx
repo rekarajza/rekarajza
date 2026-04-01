@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
+import { useCart } from '@/lib/cart';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -16,21 +17,11 @@ type Product = {
   image_url: string | null;
 };
 
-const TIP_OPTIONS = [
-  { label: '0%', value: 0 },
-  { label: '5%', value: 5 },
-  { label: '10%', value: 10 },
-  { label: '15%', value: 15 },
-];
-
 export default function Bolt() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Product | null>(null);
-  const [buying, setBuying] = useState(false);
-  const [tipPercent, setTipPercent] = useState(0);
-  const [customTip, setCustomTip] = useState('');
-  const [showCustom, setShowCustom] = useState(false);
+  const { addItem, items } = useCart();
 
   useEffect(() => {
     supabase
@@ -44,36 +35,7 @@ export default function Bolt() {
       });
   }, []);
 
-  const openModal = (product: Product) => {
-    setSelected(product);
-    setTipPercent(0);
-    setCustomTip('');
-    setShowCustom(false);
-  };
-
-  const tipAmount = selected
-    ? showCustom
-      ? Math.round(Number(customTip) || 0)
-      : Math.round(selected.price * tipPercent / 100)
-    : 0;
-
-  const totalAmount = selected ? selected.price + tipAmount : 0;
-
-  const handleBuy = async (productId: string) => {
-    setBuying(true);
-    const res = await fetch('/api/checkout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ productId, tipAmount }),
-    });
-    const data = await res.json();
-    if (data.url) {
-      window.location.href = data.url;
-    } else {
-      alert('Hiba történt. Kérlek próbáld újra.');
-      setBuying(false);
-    }
-  };
+  const isInCart = (id: string) => items.some(i => i.id === id);
 
   return (
     <div>
@@ -95,7 +57,7 @@ export default function Bolt() {
               <div
                 key={product.id}
                 className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col cursor-pointer"
-                onClick={() => openModal(product)}
+                onClick={() => setSelected(product)}
               >
                 <div className="aspect-square bg-fennel overflow-hidden">
                   {product.image_url ? (
@@ -111,10 +73,14 @@ export default function Bolt() {
                   <p className="text-dark/50 text-sm mb-2">Digitális letöltés</p>
                   <p className="text-fern font-bold text-lg mb-4">{product.price.toLocaleString('hu-HU')} Ft</p>
                   <button
-                    onClick={(e) => { e.stopPropagation(); openModal(product); }}
-                    className="mt-auto w-full py-2 bg-fern text-white rounded-full text-sm font-semibold hover:bg-fern/80 transition-colors"
+                    onClick={(e) => { e.stopPropagation(); addItem(product); }}
+                    className={`mt-auto w-full py-2 rounded-full text-sm font-semibold transition-colors ${
+                      isInCart(product.id)
+                        ? 'bg-fennel text-dark/60'
+                        : 'bg-fern text-white hover:bg-fern/80'
+                    }`}
                   >
-                    Kosárba
+                    {isInCart(product.id) ? '✓ Kosárban' : 'Kosárba'}
                   </button>
                 </div>
               </div>
@@ -154,7 +120,6 @@ export default function Bolt() {
                   </button>
                 </div>
                 <p className="text-fern font-bold text-2xl mb-6">{selected.price.toLocaleString('hu-HU')} Ft</p>
-
                 {selected.description && (
                   <div className="text-dark/70 text-sm leading-relaxed space-y-3 mb-8">
                     {selected.description.split('\n').map((line, i) => {
@@ -175,74 +140,16 @@ export default function Bolt() {
                     })}
                   </div>
                 )}
-
-                {/* Tip section */}
-                <div className="border-t border-fennel pt-6 mb-6">
-                  <p className="text-sm font-semibold text-dark mb-1">☕ Meghívod Rékát egy kávéra?</p>
-                  <p className="text-xs text-dark/40 mb-3">Teljesen opcionális, de nagyon örülök neki!</p>
-                  <div className="flex gap-2 flex-wrap mb-3">
-                    {TIP_OPTIONS.map((opt) => (
-                      <button
-                        key={opt.value}
-                        onClick={() => { setTipPercent(opt.value); setShowCustom(false); setCustomTip(''); }}
-                        className={`px-4 py-2 rounded-full text-sm font-semibold border transition-colors ${
-                          !showCustom && tipPercent === opt.value
-                            ? 'bg-fern text-white border-fern'
-                            : 'border-fennel text-dark/60 hover:border-fern'
-                        }`}
-                      >
-                        {opt.value === 0 ? 'Nem most' : `${opt.label} (${Math.round(selected.price * opt.value / 100).toLocaleString('hu-HU')} Ft)`}
-                      </button>
-                    ))}
-                    <button
-                      onClick={() => { setShowCustom(true); setTipPercent(0); }}
-                      className={`px-4 py-2 rounded-full text-sm font-semibold border transition-colors ${
-                        showCustom
-                          ? 'bg-fern text-white border-fern'
-                          : 'border-fennel text-dark/60 hover:border-fern'
-                      }`}
-                    >
-                      Egyéb
-                    </button>
-                  </div>
-                  {showCustom && (
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="number"
-                        min="0"
-                        placeholder="pl. 500"
-                        value={customTip}
-                        onChange={e => setCustomTip(e.target.value)}
-                        className="border border-fennel rounded-xl px-4 py-2 text-sm outline-none focus:border-fern w-36"
-                      />
-                      <span className="text-sm text-dark/50">Ft</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Total */}
-                <div className="flex justify-between items-center text-sm mb-2">
-                  <span className="text-dark/50">Termék ára</span>
-                  <span>{selected.price.toLocaleString('hu-HU')} Ft</span>
-                </div>
-                {tipAmount > 0 && (
-                  <div className="flex justify-between items-center text-sm mb-2">
-                    <span className="text-dark/50">☕ Kávé</span>
-                    <span>{tipAmount.toLocaleString('hu-HU')} Ft</span>
-                  </div>
-                )}
-                <div className="flex justify-between items-center font-bold text-dark border-t border-fennel pt-2">
-                  <span>Összesen</span>
-                  <span>{totalAmount.toLocaleString('hu-HU')} Ft</span>
-                </div>
               </div>
-
               <button
-                onClick={() => handleBuy(selected.id)}
-                disabled={buying}
-                className="w-full py-4 bg-fern text-white rounded-full font-semibold text-lg hover:bg-fern/80 transition-colors disabled:opacity-50 mt-6"
+                onClick={() => { addItem(selected); setSelected(null); }}
+                className={`w-full py-4 rounded-full font-semibold text-lg transition-colors ${
+                  isInCart(selected.id)
+                    ? 'bg-fennel text-dark/60'
+                    : 'bg-fern text-white hover:bg-fern/80'
+                }`}
               >
-                {buying ? 'Töltés...' : 'Kosárba'}
+                {isInCart(selected.id) ? '✓ Kosárban van' : 'Kosárba'}
               </button>
             </div>
           </div>

@@ -9,7 +9,11 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-async function sendDownloadEmail(email: string, productName: string, downloadUrl: string) {
+async function sendDownloadEmail(email: string, productName: string, downloadUrls: { name: string; url: string }[]) {
+  const fileLinks = downloadUrls.map(f =>
+    `<p style="margin: 8px 0;"><a href="${f.url}" style="color: #768E78; font-weight: bold;">${f.name} – Letöltés</a></p>`
+  ).join('');
+
   await fetch('https://api.brevo.com/v3/smtp/email', {
     method: 'POST',
     headers: {
@@ -24,14 +28,13 @@ async function sendDownloadEmail(email: string, productName: string, downloadUrl
         <div style="font-family: Georgia, serif; max-width: 520px; margin: 0 auto; color: #2C2C2C;">
           <h2 style="color: #768E78;">Köszönöm a vásárlást! 🌿</h2>
           <p>Kedves Vásárló,</p>
-          <p>Köszönöm, hogy megvásároltad a <strong>${productName}</strong> illusztrációt.</p>
-          <p>Az alábbi gombra kattintva letöltheted a fájlodat:</p>
-          <p style="text-align: center; margin: 32px 0;">
-            <a href="${downloadUrl}" style="background-color: #768E78; color: white; padding: 14px 28px; border-radius: 50px; text-decoration: none; font-weight: bold;">
-              Letöltés
-            </a>
-          </p>
-          <p style="font-size: 13px; color: #999;">Ha a gomb nem működik, másold be ezt a linket a böngésződbe:<br/>${downloadUrl}</p>
+          <p>Köszönöm, hogy megvásároltad az alábbi illusztrációt/illusztrációkat:</p>
+          <p><strong>${productName}</strong></p>
+          <p>Az alábbi linkekre kattintva letöltheted a fájlokat:</p>
+          <div style="margin: 24px 0;">
+            ${fileLinks}
+          </div>
+          <p style="font-size: 13px; color: #999;">A letöltési linkek 7 napig érvényesek.</p>
           <p>Szeretettel,<br/>Réka</p>
         </div>
       `,
@@ -46,11 +49,7 @@ export async function POST(req: NextRequest) {
   let event: Stripe.Event;
 
   try {
-    event = stripe.webhooks.constructEvent(
-      body,
-      signature,
-      process.env.STRIPE_WEBHOOK_SECRET!
-    );
+    event = stripe.webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET!);
   } catch (err) {
     console.error('Webhook signature error:', err);
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
@@ -59,30 +58,38 @@ export async function POST(req: NextRequest) {
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object as Stripe.Checkout.Session;
     const email = session.customer_details?.email ?? '';
-    const productId = session.metadata?.productId ?? '';
-    const productName = session.metadata?.productName ?? '';
+    const productNames = session.metadata?.productNames ?? '';
+    const productIds: string[] = JSON.parse(session.metadata?.productIds ?? '[]');
 
     await supabase.from('orders').insert({
       email,
-      product_name: productName,
+      product_name: productNames,
       amount: session.amount_total ?? 0,
       status: 'paid',
     });
 
-    if (productId && email) {
-      const { data: product } = await supabase
+    if (productIds.length > 0 && email) {
+      const { data: products } = await supabase
         .from('products')
-        .select('file_url')
-        .eq('id', productId)
-        .single();
+        .select('name, file_url')
+        .in('id', productIds);
 
-      if (product?.file_url) {
-        const { data: signedUrl } = await supabase.storage
-          .from('product-files')
-          .createSignedUrl(product.file_url, 60 * 60 * 24 * 7); // 7 days
+      if (products && products.length > 0) {
+        const downloadUrls: { name: string; url: string }[] = [];
 
-        if (signedUrl?.signedUrl) {
-          await sendDownloadEmail(email, productName, signedUrl.signedUrl);
+        for (const product of products) {
+          if (product.file_url) {
+            const { data: signedUrl } = await supabase.storage
+              .from('product-files')
+              .createSignedUrl(product.file_url, 60 * 60 * 24 * 7);
+            if (signedUrl?.signedUrl) {
+              downloadUrls.push({ name: product.name, url: signedUrl.signedUrl });
+            }
+          }
+        }
+
+        if (downloadUrls.length > 0) {
+          await sendDownloadEmail(email, productNames, downloadUrls);
         }
       }
     }

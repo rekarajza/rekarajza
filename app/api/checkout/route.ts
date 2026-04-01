@@ -10,34 +10,35 @@ const supabase = createClient(
 );
 
 export async function POST(req: NextRequest) {
-  const { productId, tipAmount } = await req.json();
+  const { items, tipAmount } = await req.json();
 
-  const { data: product } = await supabase
+  if (!items || items.length === 0) {
+    return NextResponse.json({ error: 'Üres kosár.' }, { status: 400 });
+  }
+
+  const { data: products } = await supabase
     .from('products')
     .select('id, name, description, price')
-    .eq('id', productId)
-    .eq('active', true)
-    .single();
+    .in('id', items)
+    .eq('active', true);
 
-  if (!product) {
-    return NextResponse.json({ error: 'Termék nem található.' }, { status: 404 });
+  if (!products || products.length === 0) {
+    return NextResponse.json({ error: 'Termékek nem találhatók.' }, { status: 404 });
   }
 
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001';
 
-  const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [
-    {
-      price_data: {
-        currency: 'huf',
-        product_data: {
-          name: product.name,
-          description: product.description,
-        },
-        unit_amount: product.price * 100,
+  const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = products.map(product => ({
+    price_data: {
+      currency: 'huf',
+      product_data: {
+        name: product.name,
+        description: product.description,
       },
-      quantity: 1,
+      unit_amount: product.price * 100,
     },
-  ];
+    quantity: 1,
+  }));
 
   if (tipAmount && tipAmount > 0) {
     lineItems.push({
@@ -59,7 +60,11 @@ export async function POST(req: NextRequest) {
     mode: 'payment',
     success_url: `${baseUrl}/bolt/sikeres?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${baseUrl}/bolt`,
-    metadata: { productId: product.id, productName: product.name, tipAmount: tipAmount ?? 0 },
+    metadata: {
+      productIds: JSON.stringify(products.map(p => p.id)),
+      productNames: products.map(p => p.name).join(', '),
+      tipAmount: tipAmount ?? 0,
+    },
   });
 
   return NextResponse.json({ url: session.url });
