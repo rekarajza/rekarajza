@@ -33,7 +33,7 @@ export default function Navbar() {
                 <Link
                   href={href}
                   className={`text-sm font-semibold tracking-wide transition-colors hover:text-peony ${
-                    pathname === href ? 'text-peony' : 'text-dark'
+                    pathname === href || (href === '/galeria' && pathname === '/') ? 'text-peony' : 'text-dark'
                   }`}
                 >
                   {label}
@@ -100,7 +100,7 @@ export default function Navbar() {
               href={href}
               onClick={() => setMenuOpen(false)}
               className={`text-base font-semibold transition-colors hover:text-peony ${
-                pathname === href ? 'text-peony' : 'text-dark'
+                pathname === href || (href === '/galeria' && pathname === '/') ? 'text-peony' : 'text-dark'
               }`}
             >
               {label}
