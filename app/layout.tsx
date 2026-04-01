@@ -3,6 +3,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
+import CookieBanner from "@/components/CookieBanner";
 import { CartProvider } from "@/lib/cart";
 
 export const metadata: Metadata = {
@@ -28,6 +29,7 @@ export default function RootLayout({
           <CartDrawer />
           <main className="flex-1">{children}</main>
           <Footer />
+          <CookieBanner />
         </CartProvider>
       </body>
     </html>
