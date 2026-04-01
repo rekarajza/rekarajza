@@ -15,18 +15,20 @@ type Product = {
   description: string;
   price: number;
   image_url: string | null;
+  category: string;
 };
 
 export default function Bolt() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Product | null>(null);
+  const [activeCategory, setActiveCategory] = useState('Összes');
   const { addItem, items } = useCart();
 
   useEffect(() => {
     supabase
       .from('products')
-      .select('id, name, description, price, image_url')
+      .select('id, name, description, price, image_url, category')
       .eq('active', true)
       .order('sort_order', { ascending: true })
       .then(({ data }) => {
@@ -36,6 +38,9 @@ export default function Bolt() {
   }, []);
 
   const isInCart = (id: string) => items.some(i => i.id === id);
+
+  const categories = ['Összes', ...Array.from(new Set(products.map(p => p.category ?? 'Illusztráció')))];
+  const filtered = activeCategory === 'Összes' ? products : products.filter(p => (p.category ?? 'Illusztráció') === activeCategory);
 
   return (
     <div>
@@ -47,13 +52,34 @@ export default function Bolt() {
       </section>
 
       <section className="bg-cream py-16 px-6">
-        <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        <div className="max-w-5xl mx-auto">
+
+          {/* Kategória szűrők */}
+          {!loading && categories.length > 2 && (
+            <div className="flex flex-wrap gap-2 mb-10">
+              {categories.map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`px-5 py-2 rounded-full text-sm font-semibold transition-colors ${
+                    activeCategory === cat
+                      ? 'bg-fern text-white'
+                      : 'bg-fennel text-dark hover:bg-pistachio'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          )}
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
           {loading ? (
             <p className="text-dark/50 col-span-4">Betöltés...</p>
           ) : products.length === 0 ? (
             <p className="text-dark/40 col-span-4 text-center">Hamarosan érkeznek a termékek.</p>
           ) : (
-            products.map((product) => (
+            filtered.map((product) => (
               <div
                 key={product.id}
                 className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col cursor-pointer"
@@ -86,6 +112,7 @@ export default function Bolt() {
               </div>
             ))
           )}
+        </div>
         </div>
       </section>
 

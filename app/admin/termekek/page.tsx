@@ -18,9 +18,10 @@ type Product = {
   active: boolean;
   created_at: string;
   sort_order: number;
+  category: string;
 };
 
-const empty = { name: '', description: '', price: 3500, image_url: '', file_url: '', active: true };
+const empty = { name: '', description: '', price: 3500, image_url: '', file_url: '', active: true, category: 'Illusztráció' };
 
 export default function Termekek() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -94,7 +95,7 @@ export default function Termekek() {
 
   const openEdit = (p: Product) => {
     setEditing(p);
-    setForm({ name: p.name, description: p.description ?? '', price: p.price, image_url: p.image_url ?? '', file_url: p.file_url ?? '', active: p.active });
+    setForm({ name: p.name, description: p.description ?? '', price: p.price, image_url: p.image_url ?? '', file_url: p.file_url ?? '', active: p.active, category: p.category ?? 'Illusztráció' });
     setImageFile(null);
     setDownloadFile(null);
     setError('');
@@ -128,7 +129,7 @@ export default function Termekek() {
         file_url = await uploadFile(downloadFile, 'product-files', 'downloads') as string;
       }
 
-      const payload = { name: form.name, description: form.description, price: form.price, image_url, file_url, active: form.active };
+      const payload = { name: form.name, description: form.description, price: form.price, image_url, file_url, active: form.active, category: form.category };
 
       if (editing) {
         await supabase.from('products').update(payload).eq('id', editing.id);
@@ -206,7 +207,7 @@ export default function Termekek() {
               )}
               <div className="flex-1">
                 <p className="font-semibold text-dark">{p.name}</p>
-                <p className="text-sm text-dark/50">{p.price.toLocaleString('hu-HU')} Ft · {p.file_url ? 'Fájl feltöltve' : 'Nincs fájl'}</p>
+                <p className="text-sm text-dark/50">{p.price.toLocaleString('hu-HU')} Ft · {p.category ?? 'Illusztráció'} · {p.file_url ? 'Fájl feltöltve' : 'Nincs fájl'}</p>
               </div>
               <div className="flex items-center gap-3">
                 <button
@@ -263,6 +264,16 @@ export default function Termekek() {
                   value={form.price}
                   onChange={e => setForm(f => ({ ...f, price: Number(e.target.value) }))}
                   className="w-full border border-fennel rounded-xl px-4 py-2 text-sm outline-none focus:border-fern"
+                />
+              </div>
+              <div>
+                <label className="text-sm text-dark/60 block mb-1">Kategória</label>
+                <input
+                  type="text"
+                  value={form.category}
+                  onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
+                  className="w-full border border-fennel rounded-xl px-4 py-2 text-sm outline-none focus:border-fern"
+                  placeholder="pl. Illusztráció, Színező..."
                 />
               </div>
               <div>
