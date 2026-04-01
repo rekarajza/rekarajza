@@ -18,10 +18,10 @@ type Product = {
   active: boolean;
   created_at: string;
   sort_order: number;
-  category: string;
+  tags: string[];
 };
 
-const empty = { name: '', description: '', price: 3500, image_url: '', file_url: '', active: true, category: 'Illusztráció' };
+const empty = { name: '', description: '', price: 3500, image_url: '', file_url: '', active: true, tags: 'Illusztráció' };
 
 export default function Termekek() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -95,7 +95,7 @@ export default function Termekek() {
 
   const openEdit = (p: Product) => {
     setEditing(p);
-    setForm({ name: p.name, description: p.description ?? '', price: p.price, image_url: p.image_url ?? '', file_url: p.file_url ?? '', active: p.active, category: p.category ?? 'Illusztráció' });
+    setForm({ name: p.name, description: p.description ?? '', price: p.price, image_url: p.image_url ?? '', file_url: p.file_url ?? '', active: p.active, tags: (p.tags ?? []).join(', ') });
     setImageFile(null);
     setDownloadFile(null);
     setError('');
@@ -129,7 +129,8 @@ export default function Termekek() {
         file_url = await uploadFile(downloadFile, 'product-files', 'downloads') as string;
       }
 
-      const payload = { name: form.name, description: form.description, price: form.price, image_url, file_url, active: form.active, category: form.category };
+      const tagsArray = (form.tags as unknown as string).split(',').map((t: string) => t.trim()).filter(Boolean);
+      const payload = { name: form.name, description: form.description, price: form.price, image_url, file_url, active: form.active, tags: tagsArray };
 
       if (editing) {
         await supabase.from('products').update(payload).eq('id', editing.id);
@@ -169,8 +170,8 @@ export default function Termekek() {
   };
 
   const [filterCategory, setFilterCategory] = useState('Összes');
-  const adminCategories = ['Összes', ...Array.from(new Set(products.map(p => p.category ?? 'Illusztráció')))];
-  const filteredProducts = filterCategory === 'Összes' ? products : products.filter(p => (p.category ?? 'Illusztráció') === filterCategory);
+  const adminCategories = ['Összes', ...Array.from(new Set(products.flatMap(p => p.tags ?? [])))];
+  const filteredProducts = filterCategory === 'Összes' ? products : products.filter(p => (p.tags ?? []).includes(filterCategory));
 
   return (
     <div>
@@ -230,7 +231,7 @@ export default function Termekek() {
               )}
               <div className="flex-1">
                 <p className="font-semibold text-dark">{p.name}</p>
-                <p className="text-sm text-dark/50">{p.price.toLocaleString('hu-HU')} Ft · {p.category ?? 'Illusztráció'} · {p.file_url ? 'Fájl feltöltve' : 'Nincs fájl'}</p>
+                <p className="text-sm text-dark/50">{p.price.toLocaleString('hu-HU')} Ft · {(p.tags ?? []).join(', ') || 'Nincs címke'} · {p.file_url ? 'Fájl feltöltve' : 'Nincs fájl'}</p>
               </div>
               <div className="flex items-center gap-3">
                 <button
@@ -290,14 +291,15 @@ export default function Termekek() {
                 />
               </div>
               <div>
-                <label className="text-sm text-dark/60 block mb-1">Kategória</label>
+                <label className="text-sm text-dark/60 block mb-1">Címkék (vesszővel elválasztva)</label>
                 <input
                   type="text"
-                  value={form.category}
-                  onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
+                  value={form.tags as unknown as string}
+                  onChange={e => setForm(f => ({ ...f, tags: e.target.value as unknown as string[] }))}
                   className="w-full border border-fennel rounded-xl px-4 py-2 text-sm outline-none focus:border-fern"
-                  placeholder="pl. Illusztráció, Színező..."
+                  placeholder="pl. Illusztráció, Ősz, Karácsonyi"
                 />
+                <p className="text-xs text-dark/40 mt-1">Több címke esetén vesszővel válaszd el őket.</p>
               </div>
               <div>
                 <label className="text-sm font-semibold text-dark block mb-2">Borítókép (ez jelenik meg a boltban)</label>

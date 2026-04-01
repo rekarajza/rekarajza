@@ -15,7 +15,7 @@ type Product = {
   description: string;
   price: number;
   image_url: string | null;
-  category: string;
+  tags: string[];
 };
 
 export default function Bolt() {
@@ -28,7 +28,7 @@ export default function Bolt() {
   useEffect(() => {
     supabase
       .from('products')
-      .select('id, name, description, price, image_url, category')
+      .select('id, name, description, price, image_url, tags')
       .eq('active', true)
       .order('sort_order', { ascending: true })
       .then(({ data }) => {
@@ -39,8 +39,8 @@ export default function Bolt() {
 
   const isInCart = (id: string) => items.some(i => i.id === id);
 
-  const categories = ['Összes', ...Array.from(new Set(products.map(p => p.category ?? 'Illusztráció')))];
-  const filtered = activeCategory === 'Összes' ? products : products.filter(p => (p.category ?? 'Illusztráció') === activeCategory);
+  const categories = ['Összes', ...Array.from(new Set(products.flatMap(p => p.tags ?? [])))];
+  const filtered = activeCategory === 'Összes' ? products : products.filter(p => (p.tags ?? []).includes(activeCategory));
 
   return (
     <div>
