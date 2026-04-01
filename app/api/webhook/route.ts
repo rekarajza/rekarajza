@@ -9,6 +9,30 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
+async function sendNotificationEmail(customerEmail: string, productNames: string, amount: number) {
+  await fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: {
+      'api-key': process.env.BREVO_API_KEY!,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      sender: { name: 'Réka rajza', email: 'rekarajza@gmail.com' },
+      to: [{ email: 'rekarajza@gmail.com' }],
+      subject: `🛍️ Új rendelés érkezett!`,
+      htmlContent: `
+        <div style="font-family: Georgia, serif; max-width: 520px; margin: 0 auto; color: #2C2C2C;">
+          <h2 style="color: #768E78;">Új rendelés érkezett! 🎉</h2>
+          <p><strong>Vevő:</strong> ${customerEmail}</p>
+          <p><strong>Termék(ek):</strong> ${productNames}</p>
+          <p><strong>Összeg:</strong> ${(amount / 100).toLocaleString('hu-HU')} Ft</p>
+          <p style="font-size: 13px; color: #999;">A rendelés részleteit az admin felületen tekintheted meg: rekarajza.hu/admin/rendelesek</p>
+        </div>
+      `,
+    }),
+  });
+}
+
 async function sendDownloadEmail(email: string, productName: string, downloadUrls: { name: string; url: string }[]) {
   const fileLinks = downloadUrls.map(f =>
     `<p style="margin: 8px 0;"><a href="${f.url}" style="color: #768E78; font-weight: bold;">${f.name} – Letöltés</a></p>`
@@ -73,6 +97,8 @@ export async function POST(req: NextRequest) {
       billing_zip: billing?.address?.postal_code ?? '',
       billing_country: billing?.address?.country ?? '',
     });
+
+    await sendNotificationEmail(email, productNames, session.amount_total ?? 0);
 
     if (productIds.length > 0 && email) {
       const { data: products } = await supabase
