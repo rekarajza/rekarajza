@@ -32,6 +32,8 @@ export default function Termekek() {
   const [downloadFile, setDownloadFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const imageRef = useRef<HTMLInputElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const descRef = useRef<HTMLTextAreaElement>(null);
@@ -60,17 +62,23 @@ export default function Termekek() {
     setLoading(false);
   };
 
-  const moveProduct = async (index: number, direction: 'up' | 'down') => {
-    const swapIndex = direction === 'up' ? index - 1 : index + 1;
-    if (swapIndex < 0 || swapIndex >= products.length) return;
+  const handleDragEnd = async (fromIndex: number, toIndex: number) => {
+    if (fromIndex === toIndex) return;
 
-    const a = products[index];
-    const b = products[swapIndex];
+    const reordered = [...products];
+    const [moved] = reordered.splice(fromIndex, 1);
+    reordered.splice(toIndex, 0, moved);
 
-    await supabase.from('products').update({ sort_order: b.sort_order }).eq('id', a.id);
-    await supabase.from('products').update({ sort_order: a.sort_order }).eq('id', b.id);
+    setProducts(reordered);
+    setDragIndex(null);
+    setDragOverIndex(null);
 
-    load();
+    // Mentsük az új sort_order értékeket Supabase-be
+    await Promise.all(
+      reordered.map((p, i) =>
+        supabase.from('products').update({ sort_order: i + 1 }).eq('id', p.id)
+      )
+    );
   };
 
   useEffect(() => { load(); }, []);
@@ -175,25 +183,20 @@ export default function Termekek() {
       ) : (
         <div className="flex flex-col gap-3">
           {products.map((p, index) => (
-            <div key={p.id} className="bg-white rounded-2xl p-5 shadow-sm flex items-center gap-5">
-              {/* Sorrend gombok */}
-              <div className="flex flex-col gap-1">
-                <button
-                  onClick={() => moveProduct(index, 'up')}
-                  disabled={index === 0}
-                  className="w-7 h-7 flex items-center justify-center rounded-lg bg-fennel hover:bg-fennel/60 disabled:opacity-20 transition-colors text-dark text-xs"
-                  title="Feljebb"
-                >
-                  ▲
-                </button>
-                <button
-                  onClick={() => moveProduct(index, 'down')}
-                  disabled={index === products.length - 1}
-                  className="w-7 h-7 flex items-center justify-center rounded-lg bg-fennel hover:bg-fennel/60 disabled:opacity-20 transition-colors text-dark text-xs"
-                  title="Lejjebb"
-                >
-                  ▼
-                </button>
+            <div
+              key={p.id}
+              draggable
+              onDragStart={() => setDragIndex(index)}
+              onDragOver={(e) => { e.preventDefault(); setDragOverIndex(index); }}
+              onDrop={() => { if (dragIndex !== null) handleDragEnd(dragIndex, index); }}
+              onDragEnd={() => { setDragIndex(null); setDragOverIndex(null); }}
+              className={`bg-white rounded-2xl p-5 shadow-sm flex items-center gap-5 transition-all cursor-grab active:cursor-grabbing ${
+                dragOverIndex === index && dragIndex !== index ? 'ring-2 ring-fern scale-[1.01]' : ''
+              } ${dragIndex === index ? 'opacity-40' : ''}`}
+            >
+              {/* Drag handle */}
+              <div className="text-dark/20 hover:text-dark/50 transition-colors select-none text-lg px-1" title="Húzd ide-oda a sorrendhez">
+                ⠿
               </div>
 
               {p.image_url ? (
