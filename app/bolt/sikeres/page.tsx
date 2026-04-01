@@ -1,6 +1,16 @@
+'use client';
+
 import Link from 'next/link';
+import { useEffect } from 'react';
+import { useCart } from '@/lib/cart';
 
 export default function Sikeres() {
+  const { clearCart } = useCart();
+
+  useEffect(() => {
+    clearCart();
+  }, []);
+
   return (
     <div>
       <section className="bg-cream min-h-[70vh] flex flex-col items-center justify-center text-center px-6 py-20">
