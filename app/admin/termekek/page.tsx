@@ -122,7 +122,8 @@ export default function Termekek() {
 
   const uploadFile = async (file: File, bucket: string, folder: string) => {
     const ext = file.name.split('.').pop();
-    const path = `${folder}/${Date.now()}.${ext}`;
+    const unique = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    const path = `${folder}/${unique}.${ext}`;
     const { error } = await supabase.storage.from(bucket).upload(path, file);
     if (error) throw error;
     if (bucket === 'product-images') {
