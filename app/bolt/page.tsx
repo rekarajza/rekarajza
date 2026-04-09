@@ -145,18 +145,13 @@ export default function Bolt() {
                 const currentImg = allImages[activeImageIndex];
                 return (
                   <>
-                    {/* Fő kép */}
                     <div
                       className="relative flex-1 overflow-hidden cursor-zoom-in group"
                       onClick={() => currentImg && setLightbox(currentImg)}
                     >
                       {currentImg ? (
                         <>
-                          <img
-                            src={currentImg}
-                            alt={selected.name}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-125"
-                          />
+                          <img src={currentImg} alt={selected.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-125" />
                           <div className="absolute inset-0 flex items-end justify-center pb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
                             <span className="bg-dark/60 text-white text-xs px-3 py-1 rounded-full">🔍 Kattints a nagyításhoz</span>
                           </div>
@@ -166,29 +161,17 @@ export default function Bolt() {
                           <span className="text-dark/30 text-sm">Nincs kép</span>
                         </div>
                       )}
-                      {/* Nyilak */}
                       {allImages.length > 1 && (
                         <>
-                          <button
-                            onClick={e => { e.stopPropagation(); setActiveImageIndex(i => (i - 1 + allImages.length) % allImages.length); }}
-                            className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full w-8 h-8 flex items-center justify-center shadow transition-colors"
-                          >‹</button>
-                          <button
-                            onClick={e => { e.stopPropagation(); setActiveImageIndex(i => (i + 1) % allImages.length); }}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full w-8 h-8 flex items-center justify-center shadow transition-colors"
-                          >›</button>
+                          <button onClick={e => { e.stopPropagation(); setActiveImageIndex(i => (i - 1 + allImages.length) % allImages.length); }} className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full w-8 h-8 flex items-center justify-center shadow transition-colors">‹</button>
+                          <button onClick={e => { e.stopPropagation(); setActiveImageIndex(i => (i + 1) % allImages.length); }} className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full w-8 h-8 flex items-center justify-center shadow transition-colors">›</button>
                         </>
                       )}
                     </div>
-                    {/* Thumbnail sor */}
                     {allImages.length > 1 && (
                       <div className="flex gap-2 p-3 bg-fennel/50 overflow-x-auto">
                         {allImages.map((img, i) => (
-                          <button
-                            key={i}
-                            onClick={() => setActiveImageIndex(i)}
-                            className={`shrink-0 w-14 h-14 rounded-lg overflow-hidden border-2 transition-colors ${activeImageIndex === i ? 'border-fern' : 'border-transparent'}`}
-                          >
+                          <button key={i} onClick={() => setActiveImageIndex(i)} className={`shrink-0 w-14 h-14 rounded-lg overflow-hidden border-2 transition-colors ${activeImageIndex === i ? 'border-fern' : 'border-transparent'}`}>
                             <img src={img} alt="" className="w-full h-full object-cover" />
                           </button>
                         ))}
