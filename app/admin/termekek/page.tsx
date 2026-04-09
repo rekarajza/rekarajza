@@ -150,12 +150,15 @@ export default function Termekek() {
 
       const tagsArray = form.tagsInput.split(',').map(t => t.trim()).filter(Boolean);
 
-      // Extra képek feltöltése
+      // Extra képek feltöltése — egyenként, sorban
       let extra_images = form.extra_images;
       if (extraImageFiles.length > 0) {
-        const uploaded = await Promise.all(
-          extraImageFiles.map(f => uploadFile(f, 'product-images', 'extras') as Promise<string>)
-        );
+        const uploaded: string[] = [];
+        for (let i = 0; i < extraImageFiles.length; i++) {
+          await new Promise(r => setTimeout(r, 100 * i)); // kis késleltetés
+          const url = await uploadFile(extraImageFiles[i], 'product-images', 'extras') as string;
+          uploaded.push(url);
+        }
         extra_images = [...extra_images, ...uploaded];
       }
 
