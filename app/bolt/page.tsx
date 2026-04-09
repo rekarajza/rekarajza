@@ -16,6 +16,7 @@ type Product = {
   price: number;
   sale_price: number | null;
   image_url: string | null;
+  extra_images: string[];
   tags: string[];
 };
 
@@ -25,12 +26,13 @@ export default function Bolt() {
   const [selected, setSelected] = useState<Product | null>(null);
   const [activeCategory, setActiveCategory] = useState('Összes');
   const [lightbox, setLightbox] = useState<string | null>(null);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
   const { addItem, items } = useCart();
 
   useEffect(() => {
     supabase
       .from('products')
-      .select('id, name, description, price, sale_price, image_url, tags')
+      .select('id, name, description, price, sale_price, image_url, extra_images, tags')
       .eq('active', true)
       .order('sort_order', { ascending: true })
       .then(({ data }) => {
@@ -85,7 +87,7 @@ export default function Bolt() {
               <div
                 key={product.id}
                 className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col cursor-pointer"
-                onClick={() => setSelected(product)}
+                onClick={() => { setSelected(product); setActiveImageIndex(0); }}
               >
                 <div className="aspect-square bg-fennel overflow-hidden">
                   {product.image_url ? (
@@ -137,25 +139,64 @@ export default function Bolt() {
             className="bg-white rounded-2xl max-w-4xl w-full overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[90vh]"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="md:w-1/2 bg-fennel min-h-64 md:min-h-0 overflow-hidden cursor-zoom-in relative group"
-              onClick={() => selected.image_url && setLightbox(selected.image_url)}
-            >
-              {selected.image_url ? (
-                <>
-                  <img
-                    src={selected.image_url}
-                    alt={selected.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-125"
-                  />
-                  <div className="absolute inset-0 flex items-end justify-center pb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                    <span className="bg-dark/60 text-white text-xs px-3 py-1 rounded-full">🔍 Kattints a nagyításhoz</span>
-                  </div>
-                </>
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <span className="text-dark/30 text-sm">Nincs kép</span>
-                </div>
-              )}
+            <div className="md:w-1/2 bg-fennel min-h-64 md:min-h-0 flex flex-col">
+              {(() => {
+                const allImages = [selected.image_url, ...(selected.extra_images ?? [])].filter(Boolean) as string[];
+                const currentImg = allImages[activeImageIndex];
+                return (
+                  <>
+                    {/* Fő kép */}
+                    <div
+                      className="relative flex-1 overflow-hidden cursor-zoom-in group"
+                      onClick={() => currentImg && setLightbox(currentImg)}
+                    >
+                      {currentImg ? (
+                        <>
+                          <img
+                            src={currentImg}
+                            alt={selected.name}
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-125"
+                          />
+                          <div className="absolute inset-0 flex items-end justify-center pb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                            <span className="bg-dark/60 text-white text-xs px-3 py-1 rounded-full">🔍 Kattints a nagyításhoz</span>
+                          </div>
+                        </>
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <span className="text-dark/30 text-sm">Nincs kép</span>
+                        </div>
+                      )}
+                      {/* Nyilak */}
+                      {allImages.length > 1 && (
+                        <>
+                          <button
+                            onClick={e => { e.stopPropagation(); setActiveImageIndex(i => (i - 1 + allImages.length) % allImages.length); }}
+                            className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full w-8 h-8 flex items-center justify-center shadow transition-colors"
+                          >‹</button>
+                          <button
+                            onClick={e => { e.stopPropagation(); setActiveImageIndex(i => (i + 1) % allImages.length); }}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full w-8 h-8 flex items-center justify-center shadow transition-colors"
+                          >›</button>
+                        </>
+                      )}
+                    </div>
+                    {/* Thumbnail sor */}
+                    {allImages.length > 1 && (
+                      <div className="flex gap-2 p-3 bg-fennel/50 overflow-x-auto">
+                        {allImages.map((img, i) => (
+                          <button
+                            key={i}
+                            onClick={() => setActiveImageIndex(i)}
+                            className={`shrink-0 w-14 h-14 rounded-lg overflow-hidden border-2 transition-colors ${activeImageIndex === i ? 'border-fern' : 'border-transparent'}`}
+                          >
+                            <img src={img} alt="" className="w-full h-full object-cover" />
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
             </div>
             <div className="md:w-1/2 p-10 flex flex-col justify-between overflow-y-auto">
               <div>

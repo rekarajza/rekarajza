@@ -16,6 +16,7 @@ type Product = {
   sale_price: number | null;
   image_url: string | null;
   file_url: string | null;
+  extra_images: string[];
   active: boolean;
   created_at: string;
   sort_order: number;
@@ -29,11 +30,12 @@ type FormState = {
   sale_price: string;
   image_url: string;
   file_url: string;
+  extra_images: string[];
   active: boolean;
   tagsInput: string;
 };
 
-const empty: FormState = { name: '', description: '', price: 3500, sale_price: '', image_url: '', file_url: '', active: true, tagsInput: 'Illusztráció' };
+const empty: FormState = { name: '', description: '', price: 3500, sale_price: '', image_url: '', file_url: '', extra_images: [], active: true, tagsInput: 'Illusztráció' };
 
 export default function Termekek() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -43,12 +45,14 @@ export default function Termekek() {
   const [form, setForm] = useState<FormState>(empty);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [downloadFile, setDownloadFile] = useState<File | null>(null);
+  const [extraImageFiles, setExtraImageFiles] = useState<File[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const imageRef = useRef<HTMLInputElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const extraImagesRef = useRef<HTMLInputElement>(null);
   const descRef = useRef<HTMLTextAreaElement>(null);
 
   const wrapSelection = (marker: string) => {
@@ -101,15 +105,17 @@ export default function Termekek() {
     setForm(empty);
     setImageFile(null);
     setDownloadFile(null);
+    setExtraImageFiles([]);
     setError('');
     setShowForm(true);
   };
 
   const openEdit = (p: Product) => {
     setEditing(p);
-    setForm({ name: p.name, description: p.description ?? '', price: p.price, sale_price: p.sale_price ? String(p.sale_price) : '', image_url: p.image_url ?? '', file_url: p.file_url ?? '', active: p.active, tagsInput: (p.tags ?? []).join(', ') });
+    setForm({ name: p.name, description: p.description ?? '', price: p.price, sale_price: p.sale_price ? String(p.sale_price) : '', image_url: p.image_url ?? '', file_url: p.file_url ?? '', extra_images: p.extra_images ?? [], active: p.active, tagsInput: (p.tags ?? []).join(', ') });
     setImageFile(null);
     setDownloadFile(null);
+    setExtraImageFiles([]);
     setError('');
     setShowForm(true);
   };
@@ -142,7 +148,17 @@ export default function Termekek() {
       }
 
       const tagsArray = form.tagsInput.split(',').map(t => t.trim()).filter(Boolean);
-      const payload = { name: form.name, description: form.description, price: form.price, sale_price: form.sale_price ? Number(form.sale_price) : null, image_url, file_url, active: form.active, tags: tagsArray };
+
+      // Extra képek feltöltése
+      let extra_images = form.extra_images;
+      if (extraImageFiles.length > 0) {
+        const uploaded = await Promise.all(
+          extraImageFiles.map(f => uploadFile(f, 'product-images', 'extras') as Promise<string>)
+        );
+        extra_images = [...extra_images, ...uploaded];
+      }
+
+      const payload = { name: form.name, description: form.description, price: form.price, sale_price: form.sale_price ? Number(form.sale_price) : null, image_url, file_url, extra_images, active: form.active, tags: tagsArray };
 
       if (editing) {
         await supabase.from('products').update(payload).eq('id', editing.id);
@@ -388,6 +404,46 @@ export default function Termekek() {
                 </button>
                 <input ref={imageRef} type="file" accept="image/*" onChange={e => setImageFile(e.target.files?.[0] ?? null)} className="hidden" />
               </div>
+
+              {/* Extra képek */}
+              <div>
+                <label className="text-sm font-semibold text-dark block mb-2">További képek (részletek, galéria)</label>
+                {/* Meglévő extra képek */}
+                {form.extra_images.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {form.extra_images.map((url, i) => (
+                      <div key={i} className="relative group">
+                        <img src={url} alt="" className="w-16 h-16 object-cover rounded-xl" />
+                        <button
+                          type="button"
+                          onClick={() => setForm(f => ({ ...f, extra_images: f.extra_images.filter((_, j) => j !== i) }))}
+                          className="absolute -top-1 -right-1 bg-peony text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                        >×</button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {/* Új extra képek kiválasztva */}
+                {extraImageFiles.length > 0 && (
+                  <p className="text-xs text-fern mb-2">{extraImageFiles.length} új kép kiválasztva</p>
+                )}
+                <button
+                  type="button"
+                  onClick={() => extraImagesRef.current?.click()}
+                  className="w-full border-2 border-dashed border-fennel hover:border-fern rounded-xl py-4 text-sm text-dark/60 hover:text-fern transition-colors"
+                >
+                  🖼 Kattints további képek hozzáadásához (több is kiválasztható)
+                </button>
+                <input
+                  ref={extraImagesRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={e => setExtraImageFiles(Array.from(e.target.files ?? []))}
+                  className="hidden"
+                />
+              </div>
+
               <div>
                 <label className="text-sm font-semibold text-dark block mb-2">Letölthető fájl (amit a vevő megkap)</label>
                 {form.file_url && !downloadFile && (
