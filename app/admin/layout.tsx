@@ -41,6 +41,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             { href: '/admin', label: 'Áttekintés' },
             { href: '/admin/termekek', label: 'Termékek' },
             { href: '/admin/rendelesek', label: 'Rendelések' },
+            { href: '/admin/statisztikak', label: 'Statisztikák' },
             { href: '/admin/uzenetek', label: 'Üzenetek' },
           ].map(({ href, label }) => (
             <Link

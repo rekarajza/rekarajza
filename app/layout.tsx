@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
 import CookieBanner from "@/components/CookieBanner";
 import { CartProvider } from "@/lib/cart";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "Réka rajza — Gyermekkönyv illusztrációk",
@@ -31,6 +32,7 @@ export default function RootLayout({
           <Footer />
           <CookieBanner />
         </CartProvider>
+        <Analytics />
       </body>
     </html>
   );
