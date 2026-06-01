@@ -28,6 +28,8 @@ export default function Rendelesek() {
   const [selected, setSelected] = useState<Order | null>(null);
   const [resending, setResending] = useState<string | null>(null);
   const [resendStatus, setResendStatus] = useState<{ id: string; ok: boolean } | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
 
   const resendEmail = async (order: Order) => {
     setResending(order.id);
@@ -39,6 +41,14 @@ export default function Rendelesek() {
     });
     setResendStatus({ id: order.id, ok: res.ok });
     setResending(null);
+  };
+
+  const deleteOrder = async (id: string) => {
+    setDeleting(id);
+    await supabase.from('orders').delete().eq('id', id);
+    setOrders(prev => prev.filter(o => o.id !== id));
+    setDeleteConfirm(null);
+    setDeleting(null);
   };
 
   useEffect(() => {
@@ -90,16 +100,48 @@ export default function Rendelesek() {
                       {order.status === 'paid' ? 'Fizetve' : order.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 flex items-center gap-3">
-                    <button onClick={() => setSelected(order)} className="text-xs text-fern hover:underline">Részletek</button>
-                    <button
-                      onClick={() => resendEmail(order)}
-                      disabled={resending === order.id}
-                      className="text-xs text-dark/40 hover:text-peony transition-colors disabled:opacity-50"
-                      title="Letöltési email újraküldése"
-                    >
-                      {resending === order.id ? '...' : resendStatus?.id === order.id ? (resendStatus.ok ? '✓ Elküldve' : '✗ Hiba') : '📧 Újraküld'}
-                    </button>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setSelected(order)}
+                        className="text-xs px-3 py-1.5 rounded-lg bg-fennel text-dark hover:bg-fern/20 transition-colors"
+                      >
+                        Részletek
+                      </button>
+                      <button
+                        onClick={() => resendEmail(order)}
+                        disabled={resending === order.id}
+                        className="text-xs px-3 py-1.5 rounded-lg bg-fern/10 text-fern hover:bg-fern/20 transition-colors disabled:opacity-50"
+                        title="Letöltési email újraküldése"
+                      >
+                        {resending === order.id ? '...' : resendStatus?.id === order.id ? (resendStatus.ok ? '✓ Elküldve' : '✗ Hiba') : '📧 Újraküld'}
+                      </button>
+                      {deleteConfirm === order.id ? (
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => deleteOrder(order.id)}
+                            disabled={deleting === order.id}
+                            className="text-xs px-3 py-1.5 rounded-lg bg-peony text-white hover:bg-peony/80 transition-colors disabled:opacity-50"
+                          >
+                            {deleting === order.id ? '...' : 'Biztos?'}
+                          </button>
+                          <button
+                            onClick={() => setDeleteConfirm(null)}
+                            className="text-xs px-2 py-1.5 rounded-lg text-dark/40 hover:text-dark transition-colors"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => setDeleteConfirm(order.id)}
+                          className="text-xs px-3 py-1.5 rounded-lg bg-peony/10 text-peony hover:bg-peony/20 transition-colors"
+                          title="Rendelés törlése"
+                        >
+                          Törlés
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
