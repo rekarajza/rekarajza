@@ -26,6 +26,20 @@ export default function Rendelesek() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Order | null>(null);
+  const [resending, setResending] = useState<string | null>(null);
+  const [resendStatus, setResendStatus] = useState<{ id: string; ok: boolean } | null>(null);
+
+  const resendEmail = async (order: Order) => {
+    setResending(order.id);
+    setResendStatus(null);
+    const res = await fetch('/api/admin/resend-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: order.email, productName: order.product_name }),
+    });
+    setResendStatus({ id: order.id, ok: res.ok });
+    setResending(null);
+  };
 
   useEffect(() => {
     supabase
@@ -76,8 +90,16 @@ export default function Rendelesek() {
                       {order.status === 'paid' ? 'Fizetve' : order.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 flex items-center gap-3">
                     <button onClick={() => setSelected(order)} className="text-xs text-fern hover:underline">Részletek</button>
+                    <button
+                      onClick={() => resendEmail(order)}
+                      disabled={resending === order.id}
+                      className="text-xs text-dark/40 hover:text-peony transition-colors disabled:opacity-50"
+                      title="Letöltési email újraküldése"
+                    >
+                      {resending === order.id ? '...' : resendStatus?.id === order.id ? (resendStatus.ok ? '✓ Elküldve' : '✗ Hiba') : '📧 Újraküld'}
+                    </button>
                   </td>
                 </tr>
               ))}
