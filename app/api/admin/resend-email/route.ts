@@ -7,32 +7,23 @@ const supabase = createClient(
 );
 
 function buildDownloadEmailHtml(firstName: string, productName: string, downloadUrls: { name: string; url: string }[]) {
-  const fileButtons = downloadUrls.map(f =>
-    `<a href="${f.url}" style="display:block;background:#768E78;color:#ffffff;text-decoration:none;padding:14px 24px;border-radius:10px;font-weight:bold;margin-bottom:10px;text-align:center;font-family:Georgia,serif;">${f.name} – Letöltés ↓</a>`
-  ).join('');
+  const fileLinks = downloadUrls.map(f =>
+    `<a href="${f.url}" style="display:inline-block;color:#ffffff;background:#768E78;text-decoration:none;padding:10px 24px;border-radius:6px;font-size:14px;font-weight:bold;margin-bottom:8px;">⬇ ${f.name} letöltése</a>`
+  ).join('<br/>');
 
   return `
-    <div style="font-family:Georgia,serif;max-width:560px;margin:0 auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.08);">
-      <div style="background:#768E78;padding:32px 40px;text-align:center;">
-        <p style="color:#ffffff;font-size:22px;font-weight:bold;margin:0;letter-spacing:1px;">Réka rajza</p>
-        <p style="color:rgba(255,255,255,0.75);font-size:13px;margin:6px 0 0;">rekarajza.hu</p>
+    <div style="font-family:Arial,Helvetica,sans-serif;max-width:480px;margin:0 auto;padding:40px 24px;color:#2C2C2C;">
+      <div style="text-align:center;margin-bottom:32px;">
+        <img src="https://rekarajza.hu/logo.png" alt="Réka rajza" style="height:64px;width:auto;" />
       </div>
-      <div style="padding:40px;">
-        <h2 style="color:#2C2C2C;font-size:20px;margin:0 0 20px;">Köszönöm a vásárlást! 🌿</h2>
-        <p style="color:#555;line-height:1.7;margin:0 0 12px;">Kedves ${firstName},</p>
-        <p style="color:#555;line-height:1.7;margin:0 0 28px;">Köszönöm, hogy vásárlásoddal támogatod a vállalkozásomat! Remélem örömöd leled a rajzokban.</p>
-        <div style="background:#f5f0e8;border-radius:10px;padding:16px 20px;margin-bottom:28px;">
-          <p style="margin:0;font-size:12px;color:#aaa;text-transform:uppercase;letter-spacing:0.5px;">Vásárolt termék</p>
-          <p style="margin:6px 0 0;font-weight:bold;color:#2C2C2C;font-size:16px;">${productName}</p>
-        </div>
-        <p style="color:#555;margin:0 0 16px;">Kattints a gombra a letöltéshez:</p>
-        ${fileButtons}
-        <p style="font-size:12px;color:#ccc;margin-top:28px;">A letöltési linkek 7 napig érvényesek.</p>
-      </div>
-      <div style="background:#f9f7f4;padding:24px 40px;text-align:center;border-top:1px solid #ede9e0;">
-        <p style="margin:0;color:#aaa;font-size:13px;">Szeretettel,</p>
-        <p style="margin:6px 0 0;color:#768E78;font-weight:bold;font-size:16px;">Réka</p>
-      </div>
+      <p style="font-size:17px;font-weight:bold;margin:0 0 16px;">Köszönöm a vásárlást! 🌿</p>
+      <p style="line-height:1.8;margin:0 0 8px;color:#333;">Kedves ${firstName},</p>
+      <p style="line-height:1.8;margin:0 0 24px;color:#333;">Köszönöm, hogy vásárlásoddal támogatod a munkámat! Remélem, örömöd leled a rajzokban.</p>
+      <p style="line-height:1.8;margin:0 0 16px;color:#333;">A <strong>${productName}</strong> letöltéséhez kattints az alábbi gombra:</p>
+      <div style="margin-bottom:28px;">${fileLinks}</div>
+      <p style="font-size:12px;color:#aaa;margin:0 0 32px;">A letöltési link 7 napig érvényes.</p>
+      <p style="line-height:1.8;color:#333;margin:0;">Szeretettel,</p>
+      <p style="color:#768E78;font-weight:bold;margin:4px 0 0;">Réka</p>
     </div>
   `;
 }
