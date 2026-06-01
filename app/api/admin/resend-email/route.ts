@@ -7,7 +7,10 @@ const supabase = createClient(
 );
 
 export async function POST(req: NextRequest) {
-  const { email, productName } = await req.json();
+  const { email, productName, customerName } = await req.json();
+  const firstName = customerName
+    ? (customerName as string).trim().split(' ').pop() ?? 'Vásárló'
+    : 'Vásárló';
 
   // Termék keresése név alapján
   const { data: products } = await supabase
@@ -53,7 +56,7 @@ export async function POST(req: NextRequest) {
       htmlContent: `
         <div style="font-family: Georgia, serif; max-width: 520px; margin: 0 auto; color: #2C2C2C;">
           <h2 style="color: #768E78;">Köszönöm a vásárlást! 🌿</h2>
-          <p>Kedves Vásárló,</p>
+          <p>Kedves ${firstName},</p>
           <p>Köszönöm, hogy vásárlásoddal támogatod a vállalkozásomat! Remélem örömöd leled a rajzokban!</p>
           <p><strong>${productName}</strong></p>
           <p>Az alábbi linkekre kattintva letöltheted a fájlokat:</p>

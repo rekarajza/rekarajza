@@ -35,7 +35,7 @@ export default function Rendelesek() {
     const res = await fetch('/api/admin/resend-email', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: order.email, productName: order.product_name }),
+      body: JSON.stringify({ email: order.email, productName: order.product_name, customerName: order.billing_name }),
     });
     setResendStatus({ id: order.id, ok: res.ok });
     setResending(null);

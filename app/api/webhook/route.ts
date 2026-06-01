@@ -33,10 +33,14 @@ async function sendNotificationEmail(customerEmail: string, productNames: string
   });
 }
 
-async function sendDownloadEmail(email: string, productName: string, downloadUrls: { name: string; url: string }[]) {
+async function sendDownloadEmail(email: string, productName: string, downloadUrls: { name: string; url: string }[], customerName?: string) {
   const fileLinks = downloadUrls.map(f =>
     `<p style="margin: 8px 0;"><a href="${f.url}" style="color: #768E78; font-weight: bold;">${f.name} – Letöltés</a></p>`
   ).join('');
+
+  const firstName = customerName
+    ? customerName.trim().split(' ').pop() ?? 'Vásárló'
+    : 'Vásárló';
 
   await fetch('https://api.brevo.com/v3/smtp/email', {
     method: 'POST',
@@ -51,7 +55,7 @@ async function sendDownloadEmail(email: string, productName: string, downloadUrl
       htmlContent: `
         <div style="font-family: Georgia, serif; max-width: 520px; margin: 0 auto; color: #2C2C2C;">
           <h2 style="color: #768E78;">Köszönöm a vásárlást! 🌿</h2>
-          <p>Kedves Vásárló,</p>
+          <p>Kedves ${firstName},</p>
           <p>Köszönöm, hogy vásárlásoddal támogatod a vállalkozásomat! Remélem örömöd leled a rajzokban!</p>
           <p><strong>${productName}</strong></p>
           <p>Az alábbi linkekre kattintva letöltheted a fájlokat:</p>
@@ -85,12 +89,24 @@ export async function POST(req: NextRequest) {
     const productNames = session.metadata?.productNames ?? '';
     const productIds: string[] = JSON.parse(session.metadata?.productIds ?? '[]');
 
+    // Duplikátum ellenőrzés — ugyanaz a session ID ne kerüljön be kétszer
+    const { data: existing } = await supabase
+      .from('orders')
+      .select('id')
+      .eq('stripe_session_id', session.id)
+      .maybeSingle();
+
+    if (existing) {
+      return NextResponse.json({ received: true, skipped: 'duplicate' });
+    }
+
     const billing = session.customer_details;
     await supabase.from('orders').insert({
       email,
       product_name: productNames,
       amount: session.amount_total ?? 0,
       status: 'paid',
+      stripe_session_id: session.id,
       billing_name: billing?.name ?? '',
       billing_address: billing?.address?.line1 ?? '',
       billing_city: billing?.address?.city ?? '',
@@ -121,7 +137,7 @@ export async function POST(req: NextRequest) {
         }
 
         if (downloadUrls.length > 0) {
-          await sendDownloadEmail(email, productNames, downloadUrls);
+          await sendDownloadEmail(email, productNames, downloadUrls, session.customer_details?.name ?? '');
         }
       }
     }
