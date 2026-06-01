@@ -12,7 +12,7 @@ function buildDownloadEmailHtml(firstName: string, productName: string, download
   ).join('<br/>');
 
   return `
-    <div style="font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;max-width:480px;margin:0 auto;padding:40px 24px;color:#2C2C2C;">
+    <div style="font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;max-width:600px;margin:0 auto;padding:40px 32px;color:#2C2C2C;">
       <div style="text-align:center;margin-bottom:32px;">
         <img src="https://rekarajza.hu/logo.png" alt="Réka rajza" style="height:100px;width:auto;" />
       </div>
