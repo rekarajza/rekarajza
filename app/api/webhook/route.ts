@@ -39,9 +39,9 @@ function buildDownloadEmailHtml(firstName: string, productName: string, download
   ).join('<br/>');
 
   return `
-    <div style="font-family:Arial,Helvetica,sans-serif;max-width:480px;margin:0 auto;padding:40px 24px;color:#2C2C2C;">
+    <div style="font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;max-width:480px;margin:0 auto;padding:40px 24px;color:#2C2C2C;">
       <div style="text-align:center;margin-bottom:32px;">
-        <img src="https://rekarajza.hu/logo.png" alt="Réka rajza" style="height:64px;width:auto;" />
+        <img src="https://rekarajza.hu/logo.png" alt="Réka rajza" style="height:100px;width:auto;" />
       </div>
       <p style="font-size:17px;font-weight:bold;margin:0 0 16px;">Köszönöm a vásárlást! 🌿</p>
       <p style="line-height:1.8;margin:0 0 8px;color:#333;">Kedves ${firstName},</p>
