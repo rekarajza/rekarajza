@@ -101,18 +101,19 @@ export async function POST(req: NextRequest) {
     }
 
     const billing = session.customer_details;
-    await supabase.from('orders').insert({
+    const { data: newOrder } = await supabase.from('orders').insert({
       email,
       product_name: productNames,
       amount: session.amount_total ?? 0,
       status: 'paid',
       stripe_session_id: session.id,
+      email_sent: false,
       billing_name: billing?.name ?? '',
       billing_address: billing?.address?.line1 ?? '',
       billing_city: billing?.address?.city ?? '',
       billing_zip: billing?.address?.postal_code ?? '',
       billing_country: billing?.address?.country ?? '',
-    });
+    }).select('id').single();
 
     await sendNotificationEmail(email, productNames, session.amount_total ?? 0);
 
@@ -138,6 +139,9 @@ export async function POST(req: NextRequest) {
 
         if (downloadUrls.length > 0) {
           await sendDownloadEmail(email, productNames, downloadUrls, session.customer_details?.name ?? '');
+          if (newOrder?.id) {
+            await supabase.from('orders').update({ email_sent: true }).eq('id', newOrder.id);
+          }
         }
       }
     }

@@ -7,7 +7,7 @@ const supabase = createClient(
 );
 
 export async function POST(req: NextRequest) {
-  const { email, productName, customerName } = await req.json();
+  const { email, productName, customerName, orderId } = await req.json();
   const firstName = customerName
     ? (customerName as string).trim().split(' ').pop() ?? 'Vásárló'
     : 'Vásárló';
@@ -71,6 +71,10 @@ export async function POST(req: NextRequest) {
   if (!res.ok) {
     const err = await res.text();
     return NextResponse.json({ error: err }, { status: 500 });
+  }
+
+  if (orderId) {
+    await supabase.from('orders').update({ email_sent: true }).eq('id', orderId);
   }
 
   return NextResponse.json({ ok: true });

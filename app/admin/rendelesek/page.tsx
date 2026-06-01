@@ -15,6 +15,7 @@ type Order = {
   amount: number;
   status: string;
   created_at: string;
+  email_sent: boolean;
   billing_name: string;
   billing_address: string;
   billing_city: string;
@@ -27,19 +28,24 @@ export default function Rendelesek() {
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Order | null>(null);
   const [resending, setResending] = useState<string | null>(null);
-  const [resendStatus, setResendStatus] = useState<{ id: string; ok: boolean } | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
 
   const resendEmail = async (order: Order) => {
     setResending(order.id);
-    setResendStatus(null);
     const res = await fetch('/api/admin/resend-email', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: order.email, productName: order.product_name, customerName: order.billing_name }),
+      body: JSON.stringify({
+        email: order.email,
+        productName: order.product_name,
+        customerName: order.billing_name,
+        orderId: order.id,
+      }),
     });
-    setResendStatus({ id: order.id, ok: res.ok });
+    if (res.ok) {
+      setOrders(prev => prev.map(o => o.id === order.id ? { ...o, email_sent: true } : o));
+    }
     setResending(null);
   };
 
@@ -94,11 +100,18 @@ export default function Rendelesek() {
                   <td className="px-6 py-4 text-dark/60">{order.email}</td>
                   <td className="px-6 py-4">{(order.amount / 100).toLocaleString('hu-HU')} Ft</td>
                   <td className="px-6 py-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      order.status === 'paid' ? 'bg-fern/20 text-fern' : 'bg-honey/40 text-dark'
-                    }`}>
-                      {order.status === 'paid' ? 'Fizetve' : order.status}
-                    </span>
+                    <div className="flex flex-col gap-1.5">
+                      <span className={`px-3 py-1 rounded-full text-xs font-semibold w-fit ${
+                        order.status === 'paid' ? 'bg-fern/20 text-fern' : 'bg-honey/40 text-dark'
+                      }`}>
+                        {order.status === 'paid' ? 'Fizetve' : order.status}
+                      </span>
+                      <span className={`px-3 py-1 rounded-full text-xs font-semibold w-fit ${
+                        order.email_sent ? 'bg-fern/20 text-fern' : 'bg-peony/10 text-peony'
+                      }`}>
+                        {order.email_sent ? '📧 Email elküldve' : '📧 Email nem ment'}
+                      </span>
+                    </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
@@ -114,7 +127,7 @@ export default function Rendelesek() {
                         className="text-xs px-3 py-1.5 rounded-lg bg-fern/10 text-fern hover:bg-fern/20 transition-colors disabled:opacity-50"
                         title="Letöltési email újraküldése"
                       >
-                        {resending === order.id ? '...' : resendStatus?.id === order.id ? (resendStatus.ok ? '✓ Elküldve' : '✗ Hiba') : '📧 Újraküld'}
+                        {resending === order.id ? '...' : '📧 Újraküld'}
                       </button>
                       {deleteConfirm === order.id ? (
                         <div className="flex items-center gap-1">
