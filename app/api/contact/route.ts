@@ -33,6 +33,7 @@ export async function POST(req: NextRequest) {
     body: JSON.stringify({
       sender: { name: 'Réka rajza weboldal', email: 'rekarajza@gmail.com' },
       to: [{ email: 'rekarajza@gmail.com', name: 'Réka' }],
+      replyTo: { email, name: nev },
       subject: `Új üzenet a weboldalról – ${nev}`,
       htmlContent: `
         <h2>Új kapcsolatfelvétel</h2>
