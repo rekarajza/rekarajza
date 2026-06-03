@@ -9,6 +9,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter();
   const pathname = usePathname();
   const [checking, setChecking] = useState(true);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -16,9 +17,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         router.push('/admin/login');
       } else {
         setChecking(false);
+        fetchUnreadCount();
       }
     });
   }, [pathname, router]);
+
+  const fetchUnreadCount = async () => {
+    const { count } = await supabase
+      .from('contact_messages')
+      .select('*', { count: 'exact', head: true })
+      .eq('read', false);
+    setUnreadCount(count ?? 0);
+  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -41,17 +51,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             { href: '/admin', label: 'Áttekintés' },
             { href: '/admin/termekek', label: 'Termékek' },
             { href: '/admin/rendelesek', label: 'Rendelések' },
+            { href: '/admin/uzenetek', label: 'Üzenetek', badge: unreadCount },
             { href: '/admin/statisztikak', label: 'Statisztikák' },
-            { href: '/admin/uzenetek', label: 'Üzenetek' },
-          ].map(({ href, label }) => (
+          ].map(({ href, label, badge }) => (
             <Link
               key={href}
               href={href}
-              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-colors ${
+              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-colors flex items-center justify-between ${
                 pathname === href ? 'bg-fennel text-dark' : 'text-dark/60 hover:bg-fennel/50'
               }`}
             >
               {label}
+              {badge ? (
+                <span className="bg-peony text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                  {badge > 9 ? '9+' : badge}
+                </span>
+              ) : null}
             </Link>
           ))}
         </nav>

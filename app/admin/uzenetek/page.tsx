@@ -14,6 +14,7 @@ type Message = {
   email: string;
   uzenet: string;
   created_at: string;
+  read: boolean;
 };
 
 export default function Uzenetek() {
@@ -35,10 +36,14 @@ export default function Uzenetek() {
       });
   }, []);
 
-  const openModal = (msg: Message) => {
+  const openModal = async (msg: Message) => {
     setSelected(msg);
     setReply('');
     setSent(false);
+    if (!msg.read) {
+      await supabase.from('contact_messages').update({ read: true }).eq('id', msg.id);
+      setMessages(prev => prev.map(m => m.id === msg.id ? { ...m, read: true } : m));
+    }
   };
 
   const sendReply = async () => {
@@ -78,7 +83,8 @@ export default function Uzenetek() {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 mb-1">
-                    <span className="font-semibold text-dark">{msg.nev}</span>
+                    {!msg.read && <span className="w-2 h-2 rounded-full bg-peony flex-shrink-0" />}
+                    <span className={`font-semibold ${!msg.read ? 'text-dark' : 'text-dark/60'}`}>{msg.nev}</span>
                     <span className="text-sm text-dark/40">{msg.email}</span>
                   </div>
                   <p className="text-sm text-dark/60 truncate">{msg.uzenet}</p>
