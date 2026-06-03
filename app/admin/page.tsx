@@ -14,7 +14,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     supabase.from('orders').select('id', { count: 'exact', head: true }).then(({ count }) => setOrders(count ?? 0));
-    supabase.from('contact_messages').select('id', { count: 'exact', head: true }).then(({ count }) => setMessages(count ?? 0));
+    supabase.from('contact_messages').select('id', { count: 'exact', head: true }).eq('read', false).then(({ count }) => setMessages(count ?? 0));
   }, []);
 
   return (
@@ -26,7 +26,7 @@ export default function AdminDashboard() {
           <p className="text-4xl font-bold text-fern">{orders}</p>
         </div>
         <div className="bg-white rounded-2xl p-6 shadow-sm">
-          <p className="text-dark/50 text-sm mb-2">Üzenetek</p>
+          <p className="text-dark/50 text-sm mb-2">Olvasatlan üzenetek</p>
           <p className="text-4xl font-bold text-peony">{messages}</p>
         </div>
       </div>
