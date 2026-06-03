@@ -100,11 +100,11 @@ export default function Uzenetek() {
 
       {selected && (
         <div
-          className="fixed inset-0 bg-dark/40 flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-dark/40 flex items-center justify-center z-50 p-8"
           onClick={() => setSelected(null)}
         >
           <div
-            className="bg-white rounded-2xl p-8 max-w-lg w-full shadow-2xl max-h-[90vh] overflow-y-auto"
+            className="bg-white rounded-2xl p-8 max-w-3xl w-full shadow-2xl max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-start mb-6">
