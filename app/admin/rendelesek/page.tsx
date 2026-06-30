@@ -16,6 +16,9 @@ type Order = {
   status: string;
   created_at: string;
   email_sent: boolean;
+  downloaded: boolean;
+  downloaded_at: string | null;
+  invoice_sent: boolean;
   billing_name: string;
   billing_address: string;
   billing_city: string;
@@ -47,6 +50,12 @@ export default function Rendelesek() {
       setOrders(prev => prev.map(o => o.id === order.id ? { ...o, email_sent: true } : o));
     }
     setResending(null);
+  };
+
+  const toggleInvoice = async (order: Order) => {
+    const newValue = !order.invoice_sent;
+    setOrders(prev => prev.map(o => o.id === order.id ? { ...o, invoice_sent: newValue } : o));
+    await supabase.from('orders').update({ invoice_sent: newValue }).eq('id', order.id);
   };
 
   const deleteOrder = async (id: string) => {
@@ -88,6 +97,7 @@ export default function Rendelesek() {
                 <th className="text-left px-6 py-3">E-mail</th>
                 <th className="text-left px-6 py-3">Összeg</th>
                 <th className="text-left px-6 py-3">Státusz</th>
+                <th className="text-left px-6 py-3">Számla</th>
                 <th className="text-left px-6 py-3"></th>
               </tr>
             </thead>
@@ -111,7 +121,25 @@ export default function Rendelesek() {
                       }`}>
                         {order.email_sent ? '📧 Email elküldve' : '📧 Email nem ment'}
                       </span>
+                      <span className={`px-3 py-1 rounded-full text-xs font-semibold w-fit ${
+                        order.downloaded ? 'bg-fern/20 text-fern' : 'bg-dark/10 text-dark/50'
+                      }`}>
+                        {order.downloaded ? '⬇ Letöltve' : '⬇ Nem töltötte le'}
+                      </span>
                     </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <label className="flex items-center gap-2 cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={order.invoice_sent}
+                        onChange={() => toggleInvoice(order)}
+                        className="w-4 h-4 accent-fern cursor-pointer"
+                      />
+                      <span className={`text-xs ${order.invoice_sent ? 'text-fern font-semibold' : 'text-dark/40'}`}>
+                        {order.invoice_sent ? 'Kiküldve' : 'Nincs kiküldve'}
+                      </span>
+                    </label>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
@@ -183,6 +211,10 @@ export default function Rendelesek() {
               <div className="flex justify-between">
                 <span className="text-dark/50">Összeg</span>
                 <span className="font-bold text-fern">{(selected.amount / 100).toLocaleString('hu-HU')} Ft</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-dark/50">Letöltve</span>
+                <span>{selected.downloaded && selected.downloaded_at ? new Date(selected.downloaded_at).toLocaleString('hu-HU') : 'Még nem'}</span>
               </div>
               <div className="border-t border-fennel pt-3 mt-1">
                 <p className="text-dark/50 mb-2 font-semibold">Számlázási adatok</p>
