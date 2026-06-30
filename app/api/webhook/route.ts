@@ -177,6 +177,8 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    const tipAmount = Number(session.metadata?.tipAmount ?? 0) || 0;
+
     const billing = session.customer_details;
     const { data: newOrder } = await supabase.from('orders').insert({
       email,
@@ -193,6 +195,7 @@ export async function POST(req: NextRequest) {
       custom_tier: customTier,
       custom_size: customSize,
       custom_description: customDescription,
+      tip_amount: tipAmount,
     }).select('id').single();
 
     const tierLabel = customTier

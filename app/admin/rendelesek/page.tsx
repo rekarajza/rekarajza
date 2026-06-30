@@ -19,6 +19,7 @@ type Order = {
   downloaded: boolean;
   downloaded_at: string | null;
   invoice_sent: boolean;
+  tip_amount: number;
   custom_tier: string | null;
   custom_size: string | null;
   custom_description: string | null;
@@ -220,6 +221,12 @@ export default function Rendelesek() {
                 <span className="text-dark/50">Összeg</span>
                 <span className="font-bold text-fern">{(selected.amount / 100).toLocaleString('hu-HU')} Ft</span>
               </div>
+              {selected.tip_amount > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-dark/50">☕ Borravaló</span>
+                  <span className="font-semibold text-dark">{selected.tip_amount.toLocaleString('hu-HU')} Ft</span>
+                </div>
+              )}
               <div className="flex justify-between">
                 <span className="text-dark/50">Letöltve</span>
                 <span>{selected.downloaded && selected.downloaded_at ? new Date(selected.downloaded_at).toLocaleString('hu-HU') : 'Még nem'}</span>
