@@ -8,3 +8,5 @@ export const CUSTOM_TIER_OPTIONS = [
 
 export type CustomTierKey = (typeof CUSTOM_TIER_OPTIONS)[number]['key'];
 export type CustomSize = (typeof CUSTOM_SIZE_OPTIONS)[number];
+
+export const CUSTOM_OPTIONS_MARKER = '[OPCIOK]';

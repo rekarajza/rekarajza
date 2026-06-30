@@ -3,12 +3,35 @@
 import { useEffect, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { useCart } from '@/lib/cart';
-import { CUSTOM_SIZE_OPTIONS, CUSTOM_TIER_OPTIONS } from '@/lib/customProduct';
+import { CUSTOM_SIZE_OPTIONS, CUSTOM_TIER_OPTIONS, CUSTOM_OPTIONS_MARKER } from '@/lib/customProduct';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
+
+function renderFormattedText(text: string, keyPrefix: string) {
+  return (
+    <div key={keyPrefix} className="text-dark/70 text-sm leading-relaxed space-y-3 mb-8">
+      {text.split('\n').map((line, i) => {
+        if (!line.trim()) return null;
+        const regex = /(\*\*\*.*?\*\*\*|\*\*.*?\*\*|\*.*?\*)/g;
+        const result: React.ReactNode[] = [];
+        let last = 0, match;
+        while ((match = regex.exec(line)) !== null) {
+          if (match.index > last) result.push(line.slice(last, match.index));
+          const m = match[0];
+          if (m.startsWith('***')) result.push(<strong key={match.index}><em>{m.slice(3, -3)}</em></strong>);
+          else if (m.startsWith('**')) result.push(<strong key={match.index}>{m.slice(2, -2)}</strong>);
+          else result.push(<em key={match.index}>{m.slice(1, -1)}</em>);
+          last = regex.lastIndex;
+        }
+        if (last < line.length) result.push(line.slice(last));
+        return <p key={`${keyPrefix}-${i}`}>{result}</p>;
+      })}
+    </div>
+  );
+}
 
 type Product = {
   id: string;
@@ -228,75 +251,77 @@ export default function Bolt() {
                     <span className="bg-honey text-dark font-bold text-xl px-4 py-1.5 rounded-full">{selected.price.toLocaleString('hu-HU')} Ft</span>
                   )}
                 </div>
-                {selected.description && (
-                  <div className="text-dark/70 text-sm leading-relaxed space-y-3 mb-8">
-                    {selected.description.split('\n').map((line, i) => {
-                      if (!line.trim()) return null;
-                      const regex = /(\*\*\*.*?\*\*\*|\*\*.*?\*\*|\*.*?\*)/g;
-                      const result: React.ReactNode[] = [];
-                      let last = 0, match;
-                      while ((match = regex.exec(line)) !== null) {
-                        if (match.index > last) result.push(line.slice(last, match.index));
-                        const m = match[0];
-                        if (m.startsWith('***')) result.push(<strong key={match.index}><em>{m.slice(3,-3)}</em></strong>);
-                        else if (m.startsWith('**')) result.push(<strong key={match.index}>{m.slice(2,-2)}</strong>);
-                        else result.push(<em key={match.index}>{m.slice(1,-1)}</em>);
-                        last = regex.lastIndex;
-                      }
-                      if (last < line.length) result.push(line.slice(last));
-                      return <p key={i}>{result}</p>;
-                    })}
-                  </div>
-                )}
-                {selected.requires_description && (
-                  <div className="mb-8 flex flex-col gap-5">
-                    <div>
-                      <p className="text-sm font-semibold text-dark mb-2">Hány karakter legyen a képen?</p>
-                      <div className="flex flex-wrap gap-2">
-                        {CUSTOM_TIER_OPTIONS.map(t => (
-                          <button
-                            key={t.key}
-                            onClick={() => setCustomTier(t.key)}
-                            className={`px-4 py-2 rounded-full text-xs font-semibold border transition-colors ${
-                              customTier === t.key ? 'bg-fern text-white border-fern' : 'border-fennel text-dark/60 hover:border-fern'
-                            }`}
-                          >
-                            {t.label} – {t.price.toLocaleString('hu-HU')} Ft
-                          </button>
-                        ))}
+                {selected.description && (() => {
+                  const configurator = selected.requires_description && (
+                    <div key="configurator" className="mb-8 flex flex-col gap-5">
+                      <div>
+                        <p className="text-sm font-semibold text-dark mb-2">Milyen méretű legyen a kép?</p>
+                        <div className="flex flex-wrap gap-2">
+                          {CUSTOM_SIZE_OPTIONS.map(s => (
+                            <button
+                              key={s}
+                              onClick={() => setCustomSize(s)}
+                              className={`px-4 py-2 rounded-full text-xs font-semibold border transition-colors ${
+                                customSize === s ? 'bg-fern text-white border-fern' : 'border-fennel text-dark/60 hover:border-fern'
+                              }`}
+                            >
+                              {s}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-dark mb-2">Hány karaktert képzelsz el a rajzon?</p>
+                        <div className="flex flex-wrap gap-2">
+                          {CUSTOM_TIER_OPTIONS.map(t => (
+                            <button
+                              key={t.key}
+                              onClick={() => setCustomTier(t.key)}
+                              className={`px-4 py-2 rounded-full text-xs font-semibold border transition-colors ${
+                                customTier === t.key ? 'bg-fern text-white border-fern' : 'border-fennel text-dark/60 hover:border-fern'
+                              }`}
+                            >
+                              {t.label} – {t.price.toLocaleString('hu-HU')} Ft
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-dark mb-2">Add meg a pontos elképzelésedet</p>
+                        <textarea
+                          value={customDescription}
+                          onChange={(e) => setCustomDescription(e.target.value)}
+                          rows={5}
+                          placeholder="Pl. kik/mik legyenek rajta, milyen helyszín, hangulat, esetleg szín preferencia..."
+                          className="w-full border border-fennel rounded-xl p-3 text-sm resize-none focus:outline-none focus:border-fern"
+                        />
+                        {customDescription.trim().length > 0 && customDescription.trim().length < 15 && (
+                          <p className="text-xs text-peony mt-1">Írj egy kicsit részletesebben, hogy pontosan tudjam megvalósítani!</p>
+                        )}
                       </div>
                     </div>
-                    <div>
-                      <p className="text-sm font-semibold text-dark mb-2">Méret</p>
-                      <div className="flex flex-wrap gap-2">
-                        {CUSTOM_SIZE_OPTIONS.map(s => (
-                          <button
-                            key={s}
-                            onClick={() => setCustomSize(s)}
-                            className={`px-4 py-2 rounded-full text-xs font-semibold border transition-colors ${
-                              customSize === s ? 'bg-fern text-white border-fern' : 'border-fennel text-dark/60 hover:border-fern'
-                            }`}
-                          >
-                            {s}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-dark mb-2">Mit szeretnél látni a képen?</p>
-                      <textarea
-                        value={customDescription}
-                        onChange={(e) => setCustomDescription(e.target.value)}
-                        rows={5}
-                        placeholder="Pl. kik/mik legyenek rajta, milyen helyszín, hangulat, esetleg szín preferencia..."
-                        className="w-full border border-fennel rounded-xl p-3 text-sm resize-none focus:outline-none focus:border-fern"
-                      />
-                      {customDescription.trim().length > 0 && customDescription.trim().length < 15 && (
-                        <p className="text-xs text-peony mt-1">Írj egy kicsit részletesebben, hogy pontosan tudjam megvalósítani!</p>
-                      )}
-                    </div>
-                  </div>
-                )}
+                  );
+
+                  const hasMarker = selected.requires_description && selected.description.includes(CUSTOM_OPTIONS_MARKER);
+
+                  if (!hasMarker) {
+                    return (
+                      <>
+                        {renderFormattedText(selected.description, 'desc')}
+                        {configurator}
+                      </>
+                    );
+                  }
+
+                  const [before, after] = selected.description.split(CUSTOM_OPTIONS_MARKER);
+                  return (
+                    <>
+                      {renderFormattedText(before, 'desc-a')}
+                      {configurator}
+                      {after && renderFormattedText(after, 'desc-b')}
+                    </>
+                  );
+                })()}
               </div>
               <button
                 onClick={() => {

@@ -319,6 +319,11 @@ export default function Termekek() {
                   placeholder="Jelölj ki szöveget, majd kattints B vagy I a formázáshoz."
                 />
                 <p className="text-xs text-dark/40 mt-1">Új sor = Enter. Jelölj ki szöveget → B (félkövér) vagy I (dőlt).</p>
+                {form.requires_description && (
+                  <p className="text-xs text-fern mt-1">
+                    🎨 Egyedi termék: írd be a leírásba ezt a szót: <code className="bg-fern/10 px-1.5 py-0.5 rounded">[OPCIOK]</code> — oda fog beékelődni a méret/karakterszám/leírás választó. Ha nem írod be, a választó a leírás végén fog megjelenni.
+                  </p>
+                )}
               </div>
               <div className="flex items-center gap-2 bg-honey/20 rounded-xl p-3">
                 <input
