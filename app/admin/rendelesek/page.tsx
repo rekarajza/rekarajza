@@ -19,6 +19,9 @@ type Order = {
   downloaded: boolean;
   downloaded_at: string | null;
   invoice_sent: boolean;
+  custom_tier: string | null;
+  custom_size: string | null;
+  custom_description: string | null;
   billing_name: string;
   billing_address: string;
   billing_city: string;
@@ -126,6 +129,11 @@ export default function Rendelesek() {
                       }`}>
                         {order.downloaded ? '⬇ Letöltve' : '⬇ Nem töltötte le'}
                       </span>
+                      {order.custom_description && (
+                        <span className="px-3 py-1 rounded-full text-xs font-semibold w-fit bg-honey/50 text-dark">
+                          🎨 Egyedi rendelés
+                        </span>
+                      )}
                     </div>
                   </td>
                   <td className="px-6 py-4">
@@ -194,7 +202,7 @@ export default function Rendelesek() {
       {/* Order detail modal */}
       {selected && (
         <div className="fixed inset-0 bg-dark/40 flex items-center justify-center z-50 p-4" onClick={() => setSelected(null)}>
-          <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-start mb-6">
               <h2 className="text-xl font-semibold">Rendelés részletei</h2>
               <button onClick={() => setSelected(null)} className="text-dark/30 hover:text-dark text-xl">✕</button>
@@ -216,6 +224,16 @@ export default function Rendelesek() {
                 <span className="text-dark/50">Letöltve</span>
                 <span>{selected.downloaded && selected.downloaded_at ? new Date(selected.downloaded_at).toLocaleString('hu-HU') : 'Még nem'}</span>
               </div>
+              {selected.custom_description && (
+                <div className="border-t border-fennel pt-3 mt-1">
+                  <p className="text-dark/50 mb-2 font-semibold">🎨 Egyedi kép kérés</p>
+                  <p><span className="text-dark/50">Karakterek: </span>{selected.custom_tier}</p>
+                  <p><span className="text-dark/50">Méret: </span>{selected.custom_size}</p>
+                  <div className="mt-2 bg-fennel/40 rounded-xl p-3 text-dark leading-relaxed whitespace-pre-wrap">
+                    {selected.custom_description}
+                  </div>
+                </div>
+              )}
               <div className="border-t border-fennel pt-3 mt-1">
                 <p className="text-dark/50 mb-2 font-semibold">Számlázási adatok</p>
                 <p><span className="text-dark/50">Név: </span>{selected.billing_name || '—'}</p>

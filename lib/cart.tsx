@@ -7,6 +7,11 @@ export type CartItem = {
   name: string;
   price: number;
   image_url: string | null;
+  customRequest?: {
+    tier: string;
+    size: string;
+    description: string;
+  };
 };
 
 type CartContextType = {

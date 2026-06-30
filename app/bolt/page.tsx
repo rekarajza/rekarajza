@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { useCart } from '@/lib/cart';
+import { CUSTOM_SIZE_OPTIONS, CUSTOM_TIER_OPTIONS } from '@/lib/customProduct';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -18,6 +19,7 @@ type Product = {
   image_url: string | null;
   extra_images: string[];
   tags: string[];
+  requires_description: boolean;
 };
 
 export default function Bolt() {
@@ -27,12 +29,23 @@ export default function Bolt() {
   const [activeCategory, setActiveCategory] = useState('Összes');
   const [lightbox, setLightbox] = useState<string | null>(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [customTier, setCustomTier] = useState<string>(CUSTOM_TIER_OPTIONS[0].key);
+  const [customSize, setCustomSize] = useState<string>(CUSTOM_SIZE_OPTIONS[0]);
+  const [customDescription, setCustomDescription] = useState('');
   const { addItem, items } = useCart();
+
+  const openProduct = (product: Product) => {
+    setSelected(product);
+    setActiveImageIndex(0);
+    setCustomTier(CUSTOM_TIER_OPTIONS[0].key);
+    setCustomSize(CUSTOM_SIZE_OPTIONS[0]);
+    setCustomDescription('');
+  };
 
   useEffect(() => {
     supabase
       .from('products')
-      .select('id, name, description, price, sale_price, image_url, extra_images, tags')
+      .select('id, name, description, price, sale_price, image_url, extra_images, tags, requires_description')
       .eq('active', true)
       .order('sort_order', { ascending: true })
       .then(({ data }) => {
@@ -87,7 +100,7 @@ export default function Bolt() {
               <div
                 key={product.id}
                 className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col cursor-pointer"
-                onClick={() => { setSelected(product); setActiveImageIndex(0); }}
+                onClick={() => openProduct(product)}
               >
                 <div className="aspect-square bg-fennel overflow-hidden">
                   {product.image_url ? (
@@ -102,7 +115,9 @@ export default function Bolt() {
                   <h3 className="font-semibold text-dark mb-1">{product.name}</h3>
                   <p className="text-dark/50 text-sm mb-2">Digitális letöltés</p>
                   <div className="mb-4 flex items-center gap-2 flex-wrap">
-                    {product.sale_price ? (
+                    {product.requires_description ? (
+                      <span className="bg-honey text-dark font-bold text-sm px-3 py-1 rounded-full">{CUSTOM_TIER_OPTIONS[0].price.toLocaleString('hu-HU')} Ft-tól</span>
+                    ) : product.sale_price ? (
                       <>
                         <span className="bg-peony text-white font-bold text-sm px-3 py-1 rounded-full">{product.sale_price.toLocaleString('hu-HU')} Ft</span>
                         <span className="text-dark/40 text-sm line-through">{product.price.toLocaleString('hu-HU')} Ft</span>
@@ -112,14 +127,21 @@ export default function Bolt() {
                     )}
                   </div>
                   <button
-                    onClick={(e) => { e.stopPropagation(); addItem(product); }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (product.requires_description) {
+                        openProduct(product);
+                      } else {
+                        addItem(product);
+                      }
+                    }}
                     className={`mt-auto w-full py-2 rounded-full text-sm font-semibold transition-colors ${
                       isInCart(product.id)
                         ? 'bg-fennel text-dark/60'
                         : 'bg-fern text-white hover:bg-fern/80'
                     }`}
                   >
-                    {isInCart(product.id) ? '✓ Kosárban' : 'Kosárba'}
+                    {product.requires_description ? 'Beállítás' : (isInCart(product.id) ? '✓ Kosárban' : 'Kosárba')}
                   </button>
                 </div>
               </div>
@@ -193,7 +215,11 @@ export default function Bolt() {
                   </button>
                 </div>
                 <div className="mb-6 flex items-center gap-3 flex-wrap">
-                  {selected.sale_price ? (
+                  {selected.requires_description ? (
+                    <span className="bg-honey text-dark font-bold text-xl px-4 py-1.5 rounded-full">
+                      {(CUSTOM_TIER_OPTIONS.find(t => t.key === customTier)?.price ?? 0).toLocaleString('hu-HU')} Ft
+                    </span>
+                  ) : selected.sale_price ? (
                     <>
                       <span className="bg-peony text-white font-bold text-xl px-4 py-1.5 rounded-full">{selected.sale_price.toLocaleString('hu-HU')} Ft</span>
                       <span className="text-dark/40 text-lg line-through">{selected.price.toLocaleString('hu-HU')} Ft</span>
@@ -222,13 +248,83 @@ export default function Bolt() {
                     })}
                   </div>
                 )}
+                {selected.requires_description && (
+                  <div className="mb-8 flex flex-col gap-5">
+                    <div>
+                      <p className="text-sm font-semibold text-dark mb-2">Hány karakter legyen a képen?</p>
+                      <div className="flex flex-wrap gap-2">
+                        {CUSTOM_TIER_OPTIONS.map(t => (
+                          <button
+                            key={t.key}
+                            onClick={() => setCustomTier(t.key)}
+                            className={`px-4 py-2 rounded-full text-xs font-semibold border transition-colors ${
+                              customTier === t.key ? 'bg-fern text-white border-fern' : 'border-fennel text-dark/60 hover:border-fern'
+                            }`}
+                          >
+                            {t.label} – {t.price.toLocaleString('hu-HU')} Ft
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-dark mb-2">Méret</p>
+                      <div className="flex flex-wrap gap-2">
+                        {CUSTOM_SIZE_OPTIONS.map(s => (
+                          <button
+                            key={s}
+                            onClick={() => setCustomSize(s)}
+                            className={`px-4 py-2 rounded-full text-xs font-semibold border transition-colors ${
+                              customSize === s ? 'bg-fern text-white border-fern' : 'border-fennel text-dark/60 hover:border-fern'
+                            }`}
+                          >
+                            {s}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-dark mb-2">Mit szeretnél látni a képen?</p>
+                      <textarea
+                        value={customDescription}
+                        onChange={(e) => setCustomDescription(e.target.value)}
+                        rows={5}
+                        placeholder="Pl. kik/mik legyenek rajta, milyen helyszín, hangulat, esetleg szín preferencia..."
+                        className="w-full border border-fennel rounded-xl p-3 text-sm resize-none focus:outline-none focus:border-fern"
+                      />
+                      {customDescription.trim().length > 0 && customDescription.trim().length < 15 && (
+                        <p className="text-xs text-peony mt-1">Írj egy kicsit részletesebben, hogy pontosan tudjam megvalósítani!</p>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
               <button
-                onClick={() => { addItem(selected); setSelected(null); }}
+                onClick={() => {
+                  if (selected.requires_description) {
+                    const tierInfo = CUSTOM_TIER_OPTIONS.find(t => t.key === customTier)!;
+                    addItem({
+                      id: selected.id,
+                      name: `${selected.name} (${tierInfo.label}, ${customSize})`,
+                      price: tierInfo.price,
+                      image_url: selected.image_url,
+                      customRequest: {
+                        tier: customTier,
+                        size: customSize,
+                        description: customDescription.trim(),
+                      },
+                    });
+                  } else {
+                    addItem(selected);
+                  }
+                  setSelected(null);
+                }}
+                disabled={selected.requires_description && customDescription.trim().length < 15}
                 className={`w-full py-4 rounded-full font-semibold text-lg transition-colors ${
                   isInCart(selected.id)
                     ? 'bg-fennel text-dark/60'
-                    : 'bg-fern text-white hover:bg-fern/80'
+                    : selected.requires_description && customDescription.trim().length < 15
+                      ? 'bg-fennel text-dark/30 cursor-not-allowed'
+                      : 'bg-fern text-white hover:bg-fern/80'
                 }`}
               >
                 {isInCart(selected.id) ? '✓ Kosárban van' : 'Kosárba'}

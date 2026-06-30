@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useCart } from '@/lib/cart';
 import { useRouter } from 'next/navigation';
+import { CUSTOM_TIER_OPTIONS } from '@/lib/customProduct';
 
 const TIP_OPTIONS = [
   { label: 'Most nem', value: 0 },
@@ -31,7 +32,10 @@ export default function CartDrawer() {
     const res = await fetch('/api/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items: items.map(i => i.id), tipAmount }),
+      body: JSON.stringify({
+        items: items.map(i => ({ id: i.id, customRequest: i.customRequest })),
+        tipAmount,
+      }),
     });
     const data = await res.json();
     if (data.url) {
@@ -73,6 +77,11 @@ export default function CartDrawer() {
                   </div>
                   <div className="flex-1">
                     <p className="font-semibold text-dark text-sm">{item.name}</p>
+                    {item.customRequest && (
+                      <p className="text-xs text-dark/40">
+                        {item.customRequest.size} · {CUSTOM_TIER_OPTIONS.find(t => t.key === item.customRequest!.tier)?.label}
+                      </p>
+                    )}
                     <p className="text-fern font-bold">{item.price.toLocaleString('hu-HU')} Ft</p>
                   </div>
                   <button onClick={() => removeItem(item.id)} className="text-dark/30 hover:text-peony transition-colors text-lg">✕</button>

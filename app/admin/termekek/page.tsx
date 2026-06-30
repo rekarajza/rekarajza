@@ -21,6 +21,7 @@ type Product = {
   created_at: string;
   sort_order: number;
   tags: string[];
+  requires_description: boolean;
 };
 
 type FormState = {
@@ -33,9 +34,10 @@ type FormState = {
   extra_images: string[];
   active: boolean;
   tagsInput: string;
+  requires_description: boolean;
 };
 
-const empty: FormState = { name: '', description: '', price: 3500, sale_price: '', image_url: '', file_url: '', extra_images: [], active: true, tagsInput: 'Illusztráció' };
+const empty: FormState = { name: '', description: '', price: 3500, sale_price: '', image_url: '', file_url: '', extra_images: [], active: true, tagsInput: 'Illusztráció', requires_description: false };
 
 export default function Termekek() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -112,7 +114,7 @@ export default function Termekek() {
 
   const openEdit = (p: Product) => {
     setEditing(p);
-    setForm({ name: p.name, description: p.description ?? '', price: p.price, sale_price: p.sale_price ? String(p.sale_price) : '', image_url: p.image_url ?? '', file_url: p.file_url ?? '', extra_images: p.extra_images ?? [], active: p.active, tagsInput: (p.tags ?? []).join(', ') });
+    setForm({ name: p.name, description: p.description ?? '', price: p.price, sale_price: p.sale_price ? String(p.sale_price) : '', image_url: p.image_url ?? '', file_url: p.file_url ?? '', extra_images: p.extra_images ?? [], active: p.active, tagsInput: (p.tags ?? []).join(', '), requires_description: p.requires_description ?? false });
     setImageFile(null);
     setDownloadFile(null);
     setExtraImageFiles([]);
@@ -162,7 +164,7 @@ export default function Termekek() {
         extra_images = [...extra_images, ...uploaded];
       }
 
-      const payload = { name: form.name, description: form.description, price: form.price, sale_price: form.sale_price ? Number(form.sale_price) : null, image_url, file_url, extra_images, active: form.active, tags: tagsArray };
+      const payload = { name: form.name, description: form.description, price: form.price, sale_price: form.sale_price ? Number(form.sale_price) : null, image_url, file_url, extra_images, active: form.active, tags: tagsArray, requires_description: form.requires_description };
 
       if (editing) {
         await supabase.from('products').update(payload).eq('id', editing.id);
@@ -262,8 +264,13 @@ export default function Termekek() {
                 <div className="w-16 h-16 bg-fennel rounded-xl flex items-center justify-center text-dark/30 text-xs">Nincs kép</div>
               )}
               <div className="flex-1">
-                <p className="font-semibold text-dark">{p.name}</p>
-                <p className="text-sm text-dark/50">{p.price.toLocaleString('hu-HU')} Ft · {(p.tags ?? []).join(', ') || 'Nincs címke'} · {p.file_url ? 'Fájl feltöltve' : 'Nincs fájl'}</p>
+                <p className="font-semibold text-dark flex items-center gap-2">
+                  {p.name}
+                  {p.requires_description && (
+                    <span className="bg-honey/50 text-dark text-xs font-semibold px-2 py-0.5 rounded-full">🎨 Egyedi</span>
+                  )}
+                </p>
+                <p className="text-sm text-dark/50">{p.price.toLocaleString('hu-HU')} Ft{p.requires_description ? '-tól' : ''} · {(p.tags ?? []).join(', ') || 'Nincs címke'} · {p.file_url ? 'Fájl feltöltve' : 'Nincs fájl'}</p>
               </div>
               <div className="flex items-center gap-3">
                 <button
@@ -313,6 +320,23 @@ export default function Termekek() {
                 />
                 <p className="text-xs text-dark/40 mt-1">Új sor = Enter. Jelölj ki szöveget → B (félkövér) vagy I (dőlt).</p>
               </div>
+              <div className="flex items-center gap-2 bg-honey/20 rounded-xl p-3">
+                <input
+                  type="checkbox"
+                  id="requires_description"
+                  checked={form.requires_description}
+                  onChange={e => setForm(f => ({ ...f, requires_description: e.target.checked }))}
+                  className="rounded"
+                />
+                <label htmlFor="requires_description" className="text-sm text-dark/70">
+                  🎨 Egyedi kép (kérdőíves) — a vevő a boltban választ karakterszám-árat és méretet, és leírja az elképzelését. Nincs azonnali letöltés.
+                </label>
+              </div>
+              {form.requires_description && (
+                <p className="text-xs text-dark/40 -mt-2">
+                  Ennél a terméknél az "Eredeti ár" csak a boltban megjelenő "-tól" ár (a legalacsonyabb kategória ára), a tényleges árat a vevő választása alapján a rendszer automatikusan számolja.
+                </p>
+              )}
               <div>
                 <label className="text-sm text-dark/60 block mb-1">Eredeti ár (Ft) *</label>
                 <input
