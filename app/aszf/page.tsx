@@ -3,7 +3,7 @@ export default function Aszf() {
     <div className="bg-cream min-h-screen py-16 px-6">
       <div className="max-w-3xl mx-auto">
         <h1 className="text-4xl mb-2">Általános Szerződési Feltételek</h1>
-        <p className="text-dark/50 text-sm mb-12">Hatályos: 2025. január 1-től</p>
+        <p className="text-dark/50 text-sm mb-12">Hatályos: 2026. július 1-től</p>
 
         <div className="prose prose-sm max-w-none text-dark/80 leading-relaxed space-y-8">
 
@@ -36,13 +36,20 @@ export default function Aszf() {
           <section>
             <h2 className="text-xl font-semibold text-dark mb-3">3. A forgalmazott termékek</h2>
             <p>
-              A Weboldalon kizárólag digitális tartalmak (illusztrációk) értékesítése történik, amelyek vásárlás után elektronikus formában (letölthető fájlként) kerülnek átadásra. A termékek fizikai formában nem kerülnek kiszállításra.
+              A Weboldalon kizárólag digitális tartalmak (illusztrációk) értékesítése történik, amelyek elektronikus formában (letölthető fájlként) kerülnek átadásra. A termékek fizikai formában nem kerülnek kiszállításra.
             </p>
+            <p>
+              A Weboldalon kétféle digitális termék érhető el:
+            </p>
+            <ul className="list-disc pl-5 space-y-1">
+              <li><strong>Előre elkészített digitális illusztrációk</strong>, amelyek a sikeres fizetést követően azonnal, e-mailben kiküldött letöltési linken keresztül elérhetők.</li>
+              <li><strong>Egyedi, személyre szabott illusztrációk</strong>, amelyek a Vásárló kifejezett kérése és egyedi elképzelése alapján, a megrendelést követően készülnek el. Ezeknél a termékeknél a megrendelés leadásakor még nem áll rendelkezésre kész fájl, az elkészült alkotás kiküldésére a termékleírásban megjelölt határidőn belül kerül sor.</li>
+            </ul>
             <p>
               A digitális termékek személyes, nem kereskedelmi célú felhasználásra készültek. Kereskedelmi célú felhasználás esetén a Vásárló köteles előzetesen kapcsolatba lépni a Szolgáltatóval.
             </p>
             <p>
-              A termékekre vonatkozó részletes információk (formátum, méret, felbontás) az egyes termékek leírásában találhatók.
+              A termékekre vonatkozó részletes információk (formátum, méret, felbontás, egyedi termékek esetén az elkészítés menete és határideje) az egyes termékek leírásában találhatók.
             </p>
           </section>
 
@@ -52,11 +59,11 @@ export default function Aszf() {
               A vásárlás az alábbi lépések szerint zajlik:
             </p>
             <ol className="list-decimal pl-5 space-y-1">
-              <li>A Vásárló a kívánt terméket a kosárba helyezi.</li>
+              <li>A Vásárló a kívánt terméket a kosárba helyezi. Egyedi, személyre szabott termék esetén a Vásárló a kosárba helyezés előtt megadja a kívánt méretet, a termék kategóriáját (pl. szereplők száma) és az elképzelése részletes leírását.</li>
               <li>A kosár tartalmát áttekinti, majd a „Fizetés" gombra kattint.</li>
               <li>A Vásárló megadja az e-mail címét, számlázási adatait és bankkártya-adatait.</li>
               <li>A fizetés a Stripe biztonságos fizetési rendszeren keresztül történik.</li>
-              <li>Sikeres fizetés után a Vásárló e-mailben megkapja a letöltési linket.</li>
+              <li>Sikeres fizetés után a Vásárló e-mailben visszaigazolást kap: előre elkészített termék esetén azonnali letöltési linket, egyedi termék esetén a megrendelés átvételét igazoló e-mailt.</li>
             </ol>
             <p>
               A szerződés a sikeres fizetés visszaigazolásával jön létre a Szolgáltató és a Vásárló között.
@@ -79,20 +86,20 @@ export default function Aszf() {
           <section>
             <h2 className="text-xl font-semibold text-dark mb-3">6. Digitális tartalom átadása</h2>
             <p>
-              A sikeres fizetést követően a Vásárló a megadott e-mail címre kap egy letöltési linket, amely korlátozott ideig érvényes. A Vásárló felelőssége a fájl letöltése az érvényességi időn belül.
+              Előre elkészített digitális termék esetén a sikeres fizetést követően a Vásárló a megadott e-mail címre kap egy letöltési linket. Amennyiben a letöltés nem sikerül vagy az e-mail nem érkezik meg, a Vásárló a rekarajza@gmail.com e-mail címen kérhet segítséget, és a Szolgáltató a letöltési lehetőséget újra biztosítja.
             </p>
             <p>
-              Amennyiben a letöltési link lejár vagy nem érkezik meg, a Vásárló a rekarajza@gmail.com e-mail címen kérhet segítséget.
+              Egyedi, személyre szabott termék esetén a Szolgáltató a megrendelés visszaigazolását követően elkészíti az alkotás vázlatát, amelyet jóváhagyásra megküld a Vásárlónak. A jóváhagyást követően készül el a végleges, színes változat, amelyet a Szolgáltató e-mailben küld meg a Vásárlónak a termékleírásban megjelölt határidőn belül.
             </p>
           </section>
 
           <section>
             <h2 className="text-xl font-semibold text-dark mb-3">7. Elállási jog</h2>
             <p>
-              A 45/2014. (II. 26.) Korm. rendelet 29. § (1) bekezdés m) pontja alapján a Vásárló <strong>nem gyakorolhatja az elállási jogát</strong> olyan nem tárgyi adathordozón nyújtott digitális adattartalom tekintetében, amelynek szolgáltatása megkezdődött, feltéve hogy a Vásárló az elállási jog elvesztéséről előzetesen kifejezetten tudomást szerzett és ehhez hozzájárult.
+              <strong>Előre elkészített digitális termékek</strong> esetén a 45/2014. (II. 26.) Korm. rendelet 29. § (1) bekezdés m) pontja alapján a Vásárló nem gyakorolhatja az elállási jogát olyan nem tárgyi adathordozón nyújtott digitális adattartalom tekintetében, amelynek szolgáltatása megkezdődött, feltéve hogy a Vásárló az elállási jog elvesztéséről előzetesen kifejezetten tudomást szerzett és ehhez hozzájárult. A vásárlás véglegesítésével a Vásárló kifejezetten hozzájárul ahhoz, hogy a Szolgáltató a digitális tartalom szolgáltatását azonnal megkezdje, és tudomásul veszi, hogy ezzel elállási jogát elveszíti.
             </p>
             <p>
-              A vásárlás véglegesítésével a Vásárló kifejezetten hozzájárul ahhoz, hogy a Szolgáltató a digitális tartalom szolgáltatását azonnal megkezdje, és tudomásul veszi, hogy ezzel elállási jogát elveszíti.
+              <strong>Egyedi, személyre szabott termékek</strong> (pl. a Vásárló kérése alapján, egyedi elképzelés szerint készülő illusztrációk) esetén a 45/2014. (II. 26.) Korm. rendelet 29. § (1) bekezdés c) pontja alapján a Vásárlót szintén nem illeti meg az elállási jog, mivel ezek a termékek kifejezetten a Vásárló utasítása alapján, az ő egyedi igényére szabottan készülnek, ezért nem minősülnek előre gyártott terméknek. A megrendelés és az ellenérték megfizetése után tehát egyedi termék esetén sem áll módunkban elállást, illetve visszatérítést biztosítani — erre tekintettel kérjük, hogy a Vásárló a megrendelés leadása előtt pontosan és részletesen fogalmazza meg elképzelését.
             </p>
           </section>
 
@@ -151,7 +158,7 @@ export default function Aszf() {
               Ha jelen ÁSZF valamely rendelkezése érvénytelen vagy végrehajthatatlan, ez nem érinti a többi rendelkezés érvényességét. Az érvénytelen rendelkezés helyébe a jogszabálynak leginkább megfelelő rendelkezés lép.
             </p>
             <p>
-              Jelen ÁSZF 2025. január 1-jén lép hatályba.
+              Jelen ÁSZF 2026. július 1-jén lép hatályba.
             </p>
           </section>
 

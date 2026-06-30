@@ -3,7 +3,7 @@ export default function Adatkezeles() {
     <div className="bg-cream min-h-screen py-16 px-6">
       <div className="max-w-3xl mx-auto">
         <h1 className="text-4xl mb-2">Adatkezelési Tájékoztató</h1>
-        <p className="text-dark/50 text-sm mb-12">Hatályos: 2025. január 1-től</p>
+        <p className="text-dark/50 text-sm mb-12">Hatályos: 2026. július 1-től</p>
 
         <div className="prose prose-sm max-w-none text-dark/80 leading-relaxed space-y-8">
 
@@ -36,7 +36,15 @@ export default function Adatkezeles() {
               <strong>Megőrzési idő:</strong> a számviteli törvény alapján 8 év
             </p>
 
-            <h3 className="text-base font-semibold text-dark mt-4 mb-2">3.2. Kapcsolatfelvétel során kezelt adatok</h3>
+            <h3 className="text-base font-semibold text-dark mt-4 mb-2">3.2. Egyedi termék rendelése során kezelt adatok</h3>
+            <p>
+              <strong>Kezelt adatok:</strong> a kívánt méret és kategória (pl. szereplők száma), valamint a Vásárló által megadott szöveges leírás az elképzelt alkotásról<br />
+              <strong>Az adatkezelés célja:</strong> az egyedi, személyre szabott digitális termék elkészítése<br />
+              <strong>Jogalap:</strong> szerződés teljesítése (GDPR 6. cikk (1) bek. b) pont)<br />
+              <strong>Megőrzési idő:</strong> a számviteli törvény alapján 8 év
+            </p>
+
+            <h3 className="text-base font-semibold text-dark mt-4 mb-2">3.3. Kapcsolatfelvétel során kezelt adatok</h3>
             <p>
               <strong>Kezelt adatok:</strong> név, e-mail cím, üzenet tartalma<br />
               <strong>Az adatkezelés célja:</strong> a megkeresés megválaszolása<br />
