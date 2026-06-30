@@ -237,20 +237,18 @@ export default function Bolt() {
                     ✕
                   </button>
                 </div>
-                <div className="mb-6 flex items-center gap-3 flex-wrap">
-                  {selected.requires_description ? (
-                    <span className="bg-honey text-dark font-bold text-xl px-4 py-1.5 rounded-full">
-                      {(CUSTOM_TIER_OPTIONS.find(t => t.key === customTier)?.price ?? 0).toLocaleString('hu-HU')} Ft
-                    </span>
-                  ) : selected.sale_price ? (
-                    <>
-                      <span className="bg-peony text-white font-bold text-xl px-4 py-1.5 rounded-full">{selected.sale_price.toLocaleString('hu-HU')} Ft</span>
-                      <span className="text-dark/40 text-lg line-through">{selected.price.toLocaleString('hu-HU')} Ft</span>
-                    </>
-                  ) : (
-                    <span className="bg-honey text-dark font-bold text-xl px-4 py-1.5 rounded-full">{selected.price.toLocaleString('hu-HU')} Ft</span>
-                  )}
-                </div>
+                {!selected.requires_description && (
+                  <div className="mb-6 flex items-center gap-3 flex-wrap">
+                    {selected.sale_price ? (
+                      <>
+                        <span className="bg-peony text-white font-bold text-xl px-4 py-1.5 rounded-full">{selected.sale_price.toLocaleString('hu-HU')} Ft</span>
+                        <span className="text-dark/40 text-lg line-through">{selected.price.toLocaleString('hu-HU')} Ft</span>
+                      </>
+                    ) : (
+                      <span className="bg-honey text-dark font-bold text-xl px-4 py-1.5 rounded-full">{selected.price.toLocaleString('hu-HU')} Ft</span>
+                    )}
+                  </div>
+                )}
                 {selected.description && (() => {
                   const configurator = selected.requires_description && (
                     <div key="configurator" className="mb-8 flex flex-col gap-5">
