@@ -155,7 +155,12 @@ export default function Bolt() {
                       if (product.requires_description) {
                         openProduct(product);
                       } else {
-                        addItem(product);
+                        addItem({
+                          id: product.id,
+                          name: product.name,
+                          price: product.sale_price ?? product.price,
+                          image_url: product.image_url,
+                        });
                       }
                     }}
                     className={`mt-auto w-full py-2 rounded-full text-sm font-semibold transition-colors ${
@@ -337,7 +342,12 @@ export default function Bolt() {
                       },
                     });
                   } else {
-                    addItem(selected);
+                    addItem({
+                      id: selected.id,
+                      name: selected.name,
+                      price: selected.sale_price ?? selected.price,
+                      image_url: selected.image_url,
+                    });
                   }
                   setSelected(null);
                 }}
