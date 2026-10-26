@@ -592,13 +592,27 @@ function setFormData(data) {
   recalc();
 }
 
+let currentQuoteId = null;
+
 function saveQuote() {
   const data = getFormData();
   const name = [data.clientName, data.projectName].filter(Boolean).join(' – ') || 'Névtelen árajánlat';
-  const id = Date.now().toString();
   let quotes = [];
   try { quotes = JSON.parse(localStorage.getItem(QUOTES_KEY) || '[]'); } catch {}
-  quotes.unshift({ id, name, savedAt: new Date().toLocaleDateString('hu-HU'), data });
+
+  if (currentQuoteId) {
+    const idx = quotes.findIndex(q => q.id === currentQuoteId);
+    if (idx >= 0) {
+      quotes[idx] = { ...quotes[idx], name, savedAt: new Date().toLocaleDateString('hu-HU'), data };
+    } else {
+      quotes.unshift({ id: currentQuoteId, name, savedAt: new Date().toLocaleDateString('hu-HU'), data });
+    }
+  } else {
+    currentQuoteId = Date.now().toString();
+    quotes.unshift({ id: currentQuoteId, name, savedAt: new Date().toLocaleDateString('hu-HU'), data });
+    history.replaceState(null, '', '?load=' + currentQuoteId);
+  }
+
   try { localStorage.setItem(QUOTES_KEY, JSON.stringify(quotes)); } catch {}
   const btn = document.getElementById('btn-save');
   const orig = btn.textContent;
@@ -611,6 +625,7 @@ function saveQuote() {
   const p = new URLSearchParams(location.search);
   const loadId = p.get('load');
   if (loadId) {
+    currentQuoteId = loadId;
     try {
       const quotes = JSON.parse(localStorage.getItem(QUOTES_KEY) || '[]');
       const q = quotes.find(q => q.id === loadId);
