@@ -473,7 +473,7 @@ let activeSlot = -1;
 function showImage(slot, src) {
   const el = document.querySelector(`.card-img[data-slot="${slot}"]`);
   if (!el) return;
-  el.querySelector('.card-ph-wrap').hidden = true;
+  el.querySelector('.card-ph-wrap').style.display = 'none';
   const img = el.querySelector('img.uploaded');
   img.src = src; img.hidden = false;
 }
