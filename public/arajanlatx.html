@@ -145,10 +145,16 @@ table input.unit { width: 90px; text-align: right; }
 }
 .validity input[type="date"]:focus { outline: none; }
 
-.sig-row { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border); }
-@media (max-width: 520px) { .sig-row { grid-template-columns: 1fr; } }
-.sig-line { border-bottom: 1px solid var(--border); height: 36px; margin-bottom: 5px; }
-.sig-cap { font-size: 10.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; }
+.callout {
+  margin-top: 32px;
+  background: var(--fennel);
+  border-left: 4px solid var(--fern);
+  border-radius: 8px;
+  padding: 14px 18px;
+  font-size: 14px;
+  color: var(--ink);
+  line-height: 1.6;
+}
 
 .sep { display: flex; align-items: center; gap: 14px; margin: 52px 0 42px; }
 .sep::before, .sep::after { content: ''; flex: 1; height: 1px; background: var(--border); }
@@ -364,16 +370,7 @@ table input.unit { width: 90px; text-align: right; }
     <span id="e-valid-suf" contenteditable="true">-ig.</span>
   </div>
 
-  <div class="sig-row">
-    <div>
-      <div class="sig-line"></div>
-      <div class="sig-cap" id="e-sig-0" contenteditable="true">Megrendelő aláírása</div>
-    </div>
-    <div>
-      <div class="sig-line"></div>
-      <div class="sig-cap" id="e-sig-1" contenteditable="true">Réka J. Kiss – Réka rajza</div>
-    </div>
-  </div>
+  <div class="callout" id="e-callout" contenteditable="true">👉 Nézd meg az illusztrációtípus-kisokost a következő oldalon – segít eldönteni, melyik típusra van szükséged!</div>
 
   <div class="sep"><span class="sep-txt" id="e-sep" contenteditable="true">Illusztrációtípusok ismertetője</span></div>
 
