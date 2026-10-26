@@ -427,20 +427,6 @@ table input.unit { width: 90px; text-align: right; }
         <p class="card-desc"  id="e-cdesc-4" contenteditable="true">Az oldal (vagy két egymást követő oldal) alján végigfutó vízszintes jelenetsáv, háttér nélkül. Mozgást, folyamatot közvetít anélkül, hogy a szöveget elfedné.</p>
       </div>
     </div>
-    <div class="card card-noimg">
-      <div class="card-body">
-        <span class="badge"    id="e-badge-5" contenteditable="true">Borítóillusztráció</span>
-        <h3 class="card-name" id="e-cname-5" contenteditable="true">Borítóillusztráció</h3>
-        <p class="card-desc"  id="e-cdesc-5" contenteditable="true">Elő- és hátlap teljes, részletes, színes kompozíciója a könyv hangulatában. Általában a legösszetettebb illusztráció, egyedi tervezéssel és letisztult tipográfiai térrel.</p>
-      </div>
-    </div>
-    <div class="card card-noimg">
-      <div class="card-body">
-        <span class="badge"    id="e-badge-6" contenteditable="true">Előzék</span>
-        <h3 class="card-name" id="e-cname-6" contenteditable="true">Előzék</h3>
-        <p class="card-desc"  id="e-cdesc-6" contenteditable="true">A könyv elejére és végére kerülő mintás oldal: a könyvben szereplő kisebb grafikákból (vignettákból, karakterekből) összerakott, ismétlődő kompozíció. Összefogja vizuálisan az egész kötetet. Keményfedeles könyveknél ajánlott.</p>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -603,13 +589,13 @@ function saveQuote() {
   if (currentQuoteId) {
     const idx = quotes.findIndex(q => q.id === currentQuoteId);
     if (idx >= 0) {
-      quotes[idx] = { ...quotes[idx], name, savedAt: new Date().toLocaleDateString('hu-HU'), data };
+      quotes[idx] = { ...quotes[idx], name, savedAt: new Date().toLocaleString('hu-HU', {year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}), data };
     } else {
-      quotes.unshift({ id: currentQuoteId, name, savedAt: new Date().toLocaleDateString('hu-HU'), data });
+      quotes.unshift({ id: currentQuoteId, name, savedAt: new Date().toLocaleString('hu-HU', {year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}), data });
     }
   } else {
     currentQuoteId = Date.now().toString();
-    quotes.unshift({ id: currentQuoteId, name, savedAt: new Date().toLocaleDateString('hu-HU'), data });
+    quotes.unshift({ id: currentQuoteId, name, savedAt: new Date().toLocaleString('hu-HU', {year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}), data });
     history.replaceState(null, '', '?load=' + currentQuoteId);
   }
 
