@@ -36,10 +36,7 @@
   background: var(--surface); border-bottom: 1px solid var(--border);
   padding: 10px 20px;
 }
-.tb-inner {
-  max-width: 760px; margin: 0 auto;
-  display: flex; justify-content: space-between; align-items: center; gap: 12px;
-}
+.tb-inner { max-width: 760px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .tb-logo { font-family: var(--ff-display); font-style: italic; color: var(--muted); font-size: 13px; }
 .tb-actions { display: flex; gap: 8px; }
 .tb-actions button {
@@ -58,6 +55,12 @@ body {
   margin: 0; padding-inline: 20px; padding-block: 40px;
 }
 .page { max-width: 760px; margin-inline: auto; }
+
+/* ── Contenteditable ── */
+[contenteditable] { border-radius: 4px; transition: background 0.12s; cursor: text; }
+[contenteditable]:hover { background: color-mix(in srgb, var(--fennel) 55%, transparent); }
+[contenteditable]:focus { background: color-mix(in srgb, var(--fennel) 90%, transparent); outline: none; box-shadow: 0 0 0 2px var(--fern); }
+@media print { [contenteditable]:hover, [contenteditable]:focus { background: transparent !important; box-shadow: none !important; } }
 
 .brand-header {
   display: flex; align-items: flex-end; justify-content: space-between;
@@ -99,7 +102,7 @@ tbody tr:last-child td { border-bottom: none; }
 tbody tr:hover td { background: color-mix(in srgb, var(--fennel) 60%, transparent); }
 td.r { text-align: right; }
 td.c { text-align: center; }
-.tn { font-weight: 500; }
+.tn { font-weight: 500; display: block; }
 .ts { font-size: 11.5px; color: var(--muted); display: block; margin-top: 1px; }
 table input[type="number"] {
   background: var(--bg); border: 1px solid var(--border); border-radius: 5px;
@@ -137,12 +140,13 @@ table input.unit { width: 90px; text-align: right; }
 
 .sep { display: flex; align-items: center; gap: 14px; margin: 52px 0 42px; }
 .sep::before, .sep::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-.sep span { font-family: var(--ff-display); font-style: italic; color: var(--muted); font-size: 0.95rem; white-space: nowrap; }
+.sep-txt { font-family: var(--ff-display); font-style: italic; color: var(--muted); font-size: 0.95rem; white-space: nowrap; }
 
 .guide-h { font-family: var(--ff-display); font-size: 1.9rem; font-weight: 500; color: var(--fern); margin: 0 0 5px; text-wrap: balance; }
 .guide-sub { color: var(--muted); font-size: 13.5px; margin: 0 0 28px; }
 .cards { display: flex; flex-direction: column; gap: 16px; }
 .card { display: grid; grid-template-columns: 130px 1fr; background: var(--surface); border-radius: 10px; border: 1px solid var(--border); overflow: hidden; }
+.card-noimg { grid-template-columns: 1fr; }
 @media (max-width: 520px) { .card { grid-template-columns: 1fr; } }
 
 .card-img {
@@ -181,16 +185,16 @@ table input.unit { width: 90px; text-align: right; }
 
   <header class="brand-header">
     <div>
-      <p class="brand-name">Réka rajza</p>
-      <p class="brand-tag">gyermekkönyv-illusztráció</p>
+      <p class="brand-name" id="e-brand-name" contenteditable="true">Réka rajza</p>
+      <p class="brand-tag"  id="e-brand-tag"  contenteditable="true">gyermekkönyv-illusztráció</p>
     </div>
     <div class="doc-label">
-      <span>Dokumentum</span>
-      <span>Árajánlat</span>
+      <span id="e-doc-label-top" contenteditable="true">Dokumentum</span>
+      <span id="e-doc-label-bot" contenteditable="true">Árajánlat</span>
     </div>
   </header>
 
-  <div class="sec">Projekt adatok</div>
+  <div class="sec" id="e-sec-meta" contenteditable="true">Projekt adatok</div>
   <div class="grid2">
     <div class="field">
       <label>Megrendelő neve</label>
@@ -214,7 +218,7 @@ table input.unit { width: 90px; text-align: right; }
     </div>
   </div>
 
-  <div class="sec">Illusztrációk és árak</div>
+  <div class="sec" id="e-sec-prices" contenteditable="true">Illusztrációk és árak</div>
   <div class="tbl-wrap">
     <table id="ptbl">
       <thead>
@@ -227,55 +231,82 @@ table input.unit { width: 90px; text-align: right; }
       </thead>
       <tbody>
         <tr>
-          <td><span class="tn">Vignetta</span><span class="ts">Egyetlen tárgy vagy karakter, háttér és körítés nélkül</span></td>
+          <td>
+            <span class="tn" id="e-tn-0" contenteditable="true">Vignetta</span>
+            <span class="ts" id="e-ts-0" contenteditable="true">Egyetlen tárgy vagy karakter, háttér és körítés nélkül</span>
+          </td>
           <td class="c"><input type="number" class="qty" min="0" value="0" data-i="0"></td>
           <td class="r"><input type="number" class="unit" min="0" value="0" data-i="0">&nbsp;Ft</td>
           <td class="r rt" id="r0">—</td>
         </tr>
         <tr>
-          <td><span class="tn">Kisillusztráció</span><span class="ts">Karakter vagy tárgy minimális körítéssel, egyszerű háttér (max. 1 karakter)</span></td>
+          <td>
+            <span class="tn" id="e-tn-1" contenteditable="true">Kisillusztráció</span>
+            <span class="ts" id="e-ts-1" contenteditable="true">Karakter vagy tárgy minimális körítéssel, egyszerű háttér (max. 1 karakter)</span>
+          </td>
           <td class="c"><input type="number" class="qty" min="0" value="0" data-i="1"></td>
           <td class="r"><input type="number" class="unit" min="0" value="0" data-i="1">&nbsp;Ft</td>
           <td class="r rt" id="r1">—</td>
         </tr>
         <tr>
-          <td><span class="tn">Egyoldalas illusztráció</span><span class="ts">Teljes oldal, színes, részletes, teljes háttér (max. 3 karakter)</span></td>
+          <td>
+            <span class="tn" id="e-tn-2" contenteditable="true">Egyoldalas illusztráció</span>
+            <span class="ts" id="e-ts-2" contenteditable="true">Teljes oldal, színes, részletes, teljes háttér (max. 3 karakter)</span>
+          </td>
           <td class="c"><input type="number" class="qty" min="0" value="0" data-i="2"></td>
           <td class="r"><input type="number" class="unit" min="0" value="0" data-i="2">&nbsp;Ft</td>
           <td class="r rt" id="r2">—</td>
         </tr>
         <tr>
-          <td><span class="tn">Duplaoldalas illusztráció</span><span class="ts">Mindkét oldalt átölelő jelenet, színes, részletes, teljes háttér (max. 5 karakter)</span></td>
+          <td>
+            <span class="tn" id="e-tn-3" contenteditable="true">Duplaoldalas illusztráció</span>
+            <span class="ts" id="e-ts-3" contenteditable="true">Mindkét oldalt átölelő jelenet, színes, részletes, teljes háttér (max. 5 karakter)</span>
+          </td>
           <td class="c"><input type="number" class="qty" min="0" value="0" data-i="3"></td>
           <td class="r"><input type="number" class="unit" min="0" value="0" data-i="3">&nbsp;Ft</td>
           <td class="r rt" id="r3">—</td>
         </tr>
         <tr>
-          <td><span class="tn">Panoráma sáv <span style="font-weight:400;color:var(--muted)">(1 oldalas)</span></span><span class="ts">Az oldal alján végigfutó jelenetsáv, háttér nélkül (max. 2 karakter)</span></td>
+          <td>
+            <span class="tn" id="e-tn-4" contenteditable="true">Panoráma sáv (1 oldalas)</span>
+            <span class="ts" id="e-ts-4" contenteditable="true">Az oldal alján végigfutó jelenetsáv, háttér nélkül (max. 2 karakter)</span>
+          </td>
           <td class="c"><input type="number" class="qty" min="0" value="0" data-i="4"></td>
           <td class="r"><input type="number" class="unit" min="0" value="0" data-i="4">&nbsp;Ft</td>
           <td class="r rt" id="r4">—</td>
         </tr>
         <tr>
-          <td><span class="tn">Panoráma sáv <span style="font-weight:400;color:var(--muted)">(2 oldalas)</span></span><span class="ts">Mindkét oldalon végigfutó jelenetsáv, háttér nélkül (max. 4 karakter)</span></td>
+          <td>
+            <span class="tn" id="e-tn-5" contenteditable="true">Panoráma sáv (2 oldalas)</span>
+            <span class="ts" id="e-ts-5" contenteditable="true">Mindkét oldalon végigfutó jelenetsáv, háttér nélkül (max. 4 karakter)</span>
+          </td>
           <td class="c"><input type="number" class="qty" min="0" value="0" data-i="5"></td>
           <td class="r"><input type="number" class="unit" min="0" value="0" data-i="5">&nbsp;Ft</td>
           <td class="r rt" id="r5">—</td>
         </tr>
         <tr>
-          <td><span class="tn">Borítóillusztráció</span><span class="ts">Elő- és hátlap, teljes színes, részletes kompozíció a könyv hangulatában</span></td>
+          <td>
+            <span class="tn" id="e-tn-6" contenteditable="true">Borítóillusztráció</span>
+            <span class="ts" id="e-ts-6" contenteditable="true">Elő- és hátlap, teljes színes, részletes kompozíció a könyv hangulatában</span>
+          </td>
           <td class="c"><input type="number" class="qty" min="0" value="0" data-i="6"></td>
           <td class="r"><input type="number" class="unit" min="0" value="0" data-i="6">&nbsp;Ft</td>
           <td class="r rt" id="r6">—</td>
         </tr>
         <tr>
-          <td><span class="tn">Előzék</span><span class="ts">Mintás oldal a könyv elejére/végére, a könyvben szereplő kisebb grafikákból összeállított kompozíció – keményfedeles könyveknél</span></td>
+          <td>
+            <span class="tn" id="e-tn-7" contenteditable="true">Előzék</span>
+            <span class="ts" id="e-ts-7" contenteditable="true">Mintás oldal a könyv elejére/végére, a könyvben szereplő kisebb grafikákból összeállított kompozíció – keményfedeles könyveknél</span>
+          </td>
           <td class="c"><input type="number" class="qty" min="0" value="0" data-i="7"></td>
           <td class="r"><input type="number" class="unit" min="0" value="0" data-i="7">&nbsp;Ft</td>
           <td class="r rt" id="r7">—</td>
         </tr>
         <tr class="sub">
-          <td><span class="tn">Plusz karakter felár</span><span class="ts">Az egész könyvre vonatkozó karakterfelár összesítve</span></td>
+          <td>
+            <span class="tn" id="e-tn-8" contenteditable="true">Plusz karakter felár</span>
+            <span class="ts" id="e-ts-8" contenteditable="true">Az egész könyvre vonatkozó karakterfelár összesítve</span>
+          </td>
           <td class="c"><input type="number" class="qty" min="0" value="0" data-i="8"></td>
           <td class="r"><input type="number" class="unit" min="0" value="0" data-i="8">&nbsp;Ft</td>
           <td class="r rt" id="r8">—</td>
@@ -284,11 +315,11 @@ table input.unit { width: 90px; text-align: right; }
     </table>
   </div>
   <div class="grand">
-    <span class="grand-lbl">Végösszeg</span>
+    <span class="grand-lbl" id="e-grand-lbl" contenteditable="true">Végösszeg</span>
     <span class="grand-amt" id="grand">0 Ft</span>
   </div>
 
-  <div class="sec" style="margin-top:28px;">Feltételek</div>
+  <div class="sec" id="e-sec-terms" contenteditable="true" style="margin-top:28px;">Feltételek</div>
   <div class="grid2">
     <div class="field">
       <label>Átdolgozási körök</label>
@@ -314,26 +345,26 @@ table input.unit { width: 90px; text-align: right; }
 
   <div class="validity">
     <span>⏳</span>
-    <span>Az árajánlat érvényes:</span>
+    <span id="e-valid-pre" contenteditable="true">Az árajánlat érvényes:</span>
     <input type="date" id="valid-to">
-    <span>-ig.</span>
+    <span id="e-valid-suf" contenteditable="true">-ig.</span>
   </div>
 
   <div class="sig-row">
     <div>
       <div class="sig-line"></div>
-      <div class="sig-cap">Megrendelő aláírása</div>
+      <div class="sig-cap" id="e-sig-0" contenteditable="true">Megrendelő aláírása</div>
     </div>
     <div>
       <div class="sig-line"></div>
-      <div class="sig-cap">Réka J. Kiss – Réka rajza</div>
+      <div class="sig-cap" id="e-sig-1" contenteditable="true">Réka J. Kiss – Réka rajza</div>
     </div>
   </div>
 
-  <div class="sep"><span>Illusztrációtípusok ismertetője</span></div>
+  <div class="sep"><span class="sep-txt" id="e-sep" contenteditable="true">Illusztrációtípusok ismertetője</span></div>
 
-  <h2 class="guide-h">Illusztrációtípusok</h2>
-  <p class="guide-sub">Az alábbi útmutató segít eligazodni, melyik illusztrációtípus illik legjobban a könyv igényeihez. A képekre kattintva saját példaképet tölthetsz fel.</p>
+  <h2 class="guide-h" id="e-guide-h" contenteditable="true">Illusztrációtípusok</h2>
+  <p class="guide-sub" id="e-guide-sub" contenteditable="true">Az alábbi útmutató segít eligazodni, melyik illusztrációtípus illik legjobban a könyv igényeihez. A képekre kattintva saját példaképet tölthetsz fel.</p>
 
   <div class="cards">
     <div class="card">
@@ -343,9 +374,9 @@ table input.unit { width: 90px; text-align: right; }
         <div class="card-overlay">📷 Csere</div>
       </div>
       <div class="card-body">
-        <span class="badge">Vignetta</span>
-        <h3 class="card-name">Vignetta</h3>
-        <p class="card-desc">Egyetlen tárgy vagy karakter rajza minden körítés és háttér nélkül. Szöveg mellé, fejlécként vagy oldaldíszként ideális.</p>
+        <span class="badge"     id="e-badge-0" contenteditable="true">Vignetta</span>
+        <h3 class="card-name"  id="e-cname-0" contenteditable="true">Vignetta</h3>
+        <p class="card-desc"   id="e-cdesc-0" contenteditable="true">Egyetlen tárgy vagy karakter rajza minden körítés és háttér nélkül. Szöveg mellé, fejlécként vagy oldaldíszként ideális.</p>
       </div>
     </div>
     <div class="card">
@@ -355,9 +386,9 @@ table input.unit { width: 90px; text-align: right; }
         <div class="card-overlay">📷 Csere</div>
       </div>
       <div class="card-body">
-        <span class="badge">Kisillusztráció</span>
-        <h3 class="card-name">Kisillusztráció</h3>
-        <p class="card-desc">Egy karakter vagy tárgy minimális körítéssel: kis díszítőelemek, egyszerű háttér. Az oldal egy részét foglalja el, a szöveg mellett kap helyet.</p>
+        <span class="badge"    id="e-badge-1" contenteditable="true">Kisillusztráció</span>
+        <h3 class="card-name" id="e-cname-1" contenteditable="true">Kisillusztráció</h3>
+        <p class="card-desc"  id="e-cdesc-1" contenteditable="true">Egy karakter vagy tárgy minimális körítéssel: kis díszítőelemek, egyszerű háttér. Az oldal egy részét foglalja el, a szöveg mellett kap helyet.</p>
       </div>
     </div>
     <div class="card">
@@ -367,9 +398,9 @@ table input.unit { width: 90px; text-align: right; }
         <div class="card-overlay">📷 Csere</div>
       </div>
       <div class="card-body">
-        <span class="badge">Egyoldalas</span>
-        <h3 class="card-name">Egyoldalas illusztráció</h3>
-        <p class="card-desc">A könyv egy teljes oldalát elfoglaló, részletes, színes, teljes hátterű kép. Fordulópontoknál és érzelmileg hangsúlyos pillanatokban a legerősebb hatású.</p>
+        <span class="badge"    id="e-badge-2" contenteditable="true">Egyoldalas</span>
+        <h3 class="card-name" id="e-cname-2" contenteditable="true">Egyoldalas illusztráció</h3>
+        <p class="card-desc"  id="e-cdesc-2" contenteditable="true">A könyv egy teljes oldalát elfoglaló, részletes, színes, teljes hátterű kép. Fordulópontoknál és érzelmileg hangsúlyos pillanatokban a legerősebb hatású.</p>
       </div>
     </div>
     <div class="card">
@@ -379,9 +410,9 @@ table input.unit { width: 90px; text-align: right; }
         <div class="card-overlay">📷 Csere</div>
       </div>
       <div class="card-body">
-        <span class="badge">Duplaoldalas</span>
-        <h3 class="card-name">Duplaoldalas illusztráció</h3>
-        <p class="card-desc">A könyv mindkét oldalát átölelő, nagyszabású jelenet, színes, részletes, teljes háttérrel. Kulcsjelenetekhez, bevezető vagy záró oldalakhoz ajánlott.</p>
+        <span class="badge"    id="e-badge-3" contenteditable="true">Duplaoldalas</span>
+        <h3 class="card-name" id="e-cname-3" contenteditable="true">Duplaoldalas illusztráció</h3>
+        <p class="card-desc"  id="e-cdesc-3" contenteditable="true">A könyv mindkét oldalát átölelő, nagyszabású jelenet, színes, részletes, teljes háttérrel. Kulcsjelenetekhez, bevezető vagy záró oldalakhoz ajánlott.</p>
       </div>
     </div>
     <div class="card">
@@ -391,33 +422,23 @@ table input.unit { width: 90px; text-align: right; }
         <div class="card-overlay">📷 Csere</div>
       </div>
       <div class="card-body">
-        <span class="badge">Panoráma sáv</span>
-        <h3 class="card-name">Panoráma sáv</h3>
-        <p class="card-desc">Az oldal (vagy két egymást követő oldal) alján végigfutó vízszintes jelenetsáv, háttér nélkül. Mozgást, folyamatot közvetít anélkül, hogy a szöveget elfedné.</p>
+        <span class="badge"    id="e-badge-4" contenteditable="true">Panoráma sáv</span>
+        <h3 class="card-name" id="e-cname-4" contenteditable="true">Panoráma sáv</h3>
+        <p class="card-desc"  id="e-cdesc-4" contenteditable="true">Az oldal (vagy két egymást követő oldal) alján végigfutó vízszintes jelenetsáv, háttér nélkül. Mozgást, folyamatot közvetít anélkül, hogy a szöveget elfedné.</p>
       </div>
     </div>
-    <div class="card">
-      <div class="card-img" data-slot="5">
-        <div class="card-ph-wrap"><div class="card-ico">🖼</div><div class="card-ph">Kattints a kép<br>feltöltéséhez</div></div>
-        <img class="uploaded" src="" alt="" hidden>
-        <div class="card-overlay">📷 Csere</div>
-      </div>
+    <div class="card card-noimg">
       <div class="card-body">
-        <span class="badge">Borítóillusztráció</span>
-        <h3 class="card-name">Borítóillusztráció</h3>
-        <p class="card-desc">Elő- és hátlap teljes, részletes, színes kompozíciója a könyv hangulatában. Általában a legösszetettebb illusztráció, egyedi tervezéssel és letisztult tipográfiai térrel.</p>
+        <span class="badge"    id="e-badge-5" contenteditable="true">Borítóillusztráció</span>
+        <h3 class="card-name" id="e-cname-5" contenteditable="true">Borítóillusztráció</h3>
+        <p class="card-desc"  id="e-cdesc-5" contenteditable="true">Elő- és hátlap teljes, részletes, színes kompozíciója a könyv hangulatában. Általában a legösszetettebb illusztráció, egyedi tervezéssel és letisztult tipográfiai térrel.</p>
       </div>
     </div>
-    <div class="card">
-      <div class="card-img" data-slot="6">
-        <div class="card-ph-wrap"><div class="card-ico">🖼</div><div class="card-ph">Kattints a kép<br>feltöltéséhez</div></div>
-        <img class="uploaded" src="" alt="" hidden>
-        <div class="card-overlay">📷 Csere</div>
-      </div>
+    <div class="card card-noimg">
       <div class="card-body">
-        <span class="badge">Előzék</span>
-        <h3 class="card-name">Előzék</h3>
-        <p class="card-desc">A könyv elejére és végére kerülő mintás oldal: a könyvben szereplő kisebb grafikákból (vignettákból, karakterekből) összerakott, ismétlődő kompozíció. Összefogja vizuálisan az egész kötetet. Keményfedeles könyveknél ajánlott.</p>
+        <span class="badge"    id="e-badge-6" contenteditable="true">Előzék</span>
+        <h3 class="card-name" id="e-cname-6" contenteditable="true">Előzék</h3>
+        <p class="card-desc"  id="e-cdesc-6" contenteditable="true">A könyv elejére és végére kerülő mintás oldal: a könyvben szereplő kisebb grafikákból (vignettákból, karakterekből) összerakott, ismétlődő kompozíció. Összefogja vizuálisan az egész kötetet. Keményfedeles könyveknél ajánlott.</p>
       </div>
     </div>
   </div>
@@ -427,8 +448,9 @@ table input.unit { width: 90px; text-align: right; }
 
 <script>
 const QUOTES_KEY = 'rr_quotes';
+const TEXT_KEY   = 'rr_text';
 const ROW_COUNT  = 9;
-const IMG_COUNT  = 7;
+const IMG_COUNT  = 5;
 
 // ── Dates ──
 (function () {
@@ -487,7 +509,43 @@ fileInput.addEventListener('change', () => {
   reader.readAsDataURL(file);
 });
 
-// ── Save / Load ──
+// ── Contenteditable text persistence ──
+function getEditableText() {
+  const result = {};
+  document.querySelectorAll('[contenteditable][id]').forEach(el => {
+    result[el.id] = el.innerHTML;
+  });
+  return result;
+}
+
+function setEditableText(texts) {
+  if (!texts) return;
+  Object.entries(texts).forEach(([id, html]) => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = html;
+  });
+}
+
+function saveTextToLS() {
+  try { localStorage.setItem(TEXT_KEY, JSON.stringify(getEditableText())); } catch {}
+}
+
+// Load saved text from localStorage
+try {
+  const saved = JSON.parse(localStorage.getItem(TEXT_KEY) || '{}');
+  setEditableText(saved);
+} catch {}
+
+// Auto-save on any text edit (debounced)
+let textSaveTimer;
+document.addEventListener('input', e => {
+  if (e.target.isContentEditable) {
+    clearTimeout(textSaveTimer);
+    textSaveTimer = setTimeout(saveTextToLS, 600);
+  }
+});
+
+// ── Save / Load quotes ──
 function getFormData() {
   const g = id => document.getElementById(id)?.value || '';
   return {
@@ -505,7 +563,8 @@ function getFormData() {
     rows: Array.from({length: ROW_COUNT}, (_, i) => ({
       qty:  document.querySelector(`.qty[data-i="${i}"]`)?.value  || '0',
       unit: document.querySelector(`.unit[data-i="${i}"]`)?.value || '0',
-    }))
+    })),
+    texts: getEditableText(),
   };
 }
 
@@ -529,6 +588,7 @@ function setFormData(data) {
     if (q) q.value = row.qty;
     if (u) u.value = row.unit;
   });
+  if (data.texts) setEditableText(data.texts);
   recalc();
 }
 
