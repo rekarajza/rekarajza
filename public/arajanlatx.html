@@ -47,7 +47,15 @@
 .tb-actions button:hover { opacity: 0.82; }
 .btn-save   { background: var(--fern); color: #fff; }
 .btn-export { background: var(--surface); color: var(--ink); border: 1px solid var(--border) !important; }
-@media print { .toolbar { display: none !important; } }
+@media print {
+  .toolbar { display: none !important; }
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .card { break-inside: avoid; page-break-inside: avoid; }
+  .card-img { break-inside: avoid; }
+  .grand { break-inside: avoid; }
+  .sig-row { break-inside: avoid; }
+  .validity { break-inside: avoid; }
+}
 
 body {
   background: var(--bg); color: var(--ink);
