@@ -1,0 +1,510 @@
+<title>Réka rajza – Árajánlat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Source+Sans+3:wght@400;500;600&display=swap">
+
+<style>
+/* Layout: brand header → project meta → pricing table → notes → validity → sig → [separator] → type guide */
+:root {
+  --bg:       #FAF7F2;
+  --surface:  #FFFFFF;
+  --fennel:   #E8EDE0;
+  --fern:     #768E78;
+  --honey:    #F0C040;
+  --honey-bg: #FBF0C8;
+  --ink:      #2C2C2C;
+  --muted:    #7A7A72;
+  --border:   #D8E0D0;
+
+  --ff-display: 'Cormorant Garamond', Georgia, serif;
+  --ff-body:    'Source Sans 3', system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:       #1A1C18;
+    --surface:  #22251F;
+    --fennel:   #252820;
+    --fern:     #9BAD9D;
+    --honey:    #B08820;
+    --honey-bg: #2E2910;
+    --ink:      #EDE9E3;
+    --muted:    #9A9A90;
+    --border:   #353830;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:       #1A1C18;
+  --surface:  #22251F;
+  --fennel:   #252820;
+  --fern:     #9BAD9D;
+  --honey:    #B08820;
+  --honey-bg: #2E2910;
+  --ink:      #EDE9E3;
+  --muted:    #9A9A90;
+  --border:   #353830;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--ff-body);
+  font-size: 15px;
+  line-height: 1.65;
+  margin: 0;
+  padding-inline: 20px;
+  padding-block: 40px;
+}
+.page { max-width: 760px; margin-inline: auto; }
+
+/* ── Brand header ── */
+.brand-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--fern);
+  margin-bottom: 32px;
+}
+.brand-name { font-family: var(--ff-display); font-size: 2.2rem; font-weight: 500; color: var(--fern); line-height: 1; margin: 0; }
+.brand-tag  { font-family: var(--ff-display); font-style: italic; font-size: 0.95rem; color: var(--muted); margin: 5px 0 0; }
+.doc-label  { text-align: right; }
+.doc-label span:first-child { display: block; font-size: 0.62rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.16em; color: var(--muted); margin-bottom: 2px; }
+.doc-label span:last-child  { display: block; font-family: var(--ff-display); font-size: 1.5rem; font-weight: 500; color: var(--ink); }
+
+/* ── Section label ── */
+.sec { font-size: 0.62rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em; color: var(--fern); padding-bottom: 6px; border-bottom: 1px solid var(--border); margin: 28px 0 14px; }
+
+/* ── Fields ── */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 28px; }
+@media (max-width: 520px) { .grid2 { grid-template-columns: 1fr; } }
+.full { grid-column: 1 / -1; }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field label { font-size: 0.62rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); }
+.field input, .field textarea {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
+  padding: 8px 10px; font-family: var(--ff-body); font-size: 14px; color: var(--ink);
+  width: 100%; transition: border-color 0.15s;
+}
+.field input:focus, .field textarea:focus { outline: none; border-color: var(--fern); }
+.field textarea { resize: vertical; min-height: 64px; }
+
+/* ── Pricing table ── */
+.tbl-wrap { overflow-x: auto; margin-bottom: 14px; }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 480px; }
+thead th {
+  text-align: left; font-size: 0.6rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.13em; color: var(--muted); padding: 9px 12px;
+  background: var(--fennel); border-bottom: 1px solid var(--border); white-space: nowrap;
+}
+thead th.r { text-align: right; }
+thead th.c { text-align: center; }
+tbody td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: color-mix(in srgb, var(--fennel) 60%, transparent); }
+td.r { text-align: right; }
+td.c { text-align: center; }
+.tn { font-weight: 500; }
+.ts { font-size: 11.5px; color: var(--muted); display: block; margin-top: 1px; }
+table input[type="number"] {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 5px;
+  padding: 5px 7px; font-family: var(--ff-body); font-size: 13.5px; color: var(--ink);
+  font-variant-numeric: tabular-nums; -moz-appearance: textfield; appearance: textfield;
+}
+table input[type="number"]:focus { outline: none; border-color: var(--fern); }
+table input.qty  { width: 52px; text-align: center; }
+table input.unit { width: 90px; text-align: right; }
+.rt { font-weight: 600; font-variant-numeric: tabular-nums; color: var(--fern); white-space: nowrap; }
+.sub td { background: color-mix(in srgb, var(--fennel) 40%, transparent); }
+.sub td:first-child { padding-left: 24px; }
+.sub .tn { font-weight: 400; color: var(--muted); font-size: 13px; }
+.sub .ts { font-size: 11px; }
+
+/* ── Grand total ── */
+.grand { display: flex; justify-content: flex-end; align-items: baseline; gap: 14px; padding-top: 14px; border-top: 2px solid var(--fern); margin-bottom: 8px; }
+.grand-lbl { font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.13em; color: var(--muted); }
+.grand-amt { font-family: var(--ff-display); font-size: 2.1rem; font-weight: 600; color: var(--fern); font-variant-numeric: tabular-nums; line-height: 1; }
+
+/* ── Validity ── */
+.validity {
+  background: var(--honey-bg); border: 1px solid var(--honey); border-radius: 8px;
+  padding: 10px 16px; font-size: 13px; color: var(--ink);
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 20px;
+}
+.validity input[type="date"] {
+  background: transparent; border: none; border-bottom: 1px dashed var(--honey);
+  padding: 0 2px; font-family: var(--ff-body); font-size: 13px; color: var(--ink); cursor: pointer;
+}
+.validity input[type="date"]:focus { outline: none; }
+
+/* ── Signature ── */
+.sig-row { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border); }
+@media (max-width: 520px) { .sig-row { grid-template-columns: 1fr; } }
+.sig-line { border-bottom: 1px solid var(--border); height: 36px; margin-bottom: 5px; }
+.sig-cap { font-size: 10.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; }
+
+/* ── Separator ── */
+.sep { display: flex; align-items: center; gap: 14px; margin: 52px 0 42px; }
+.sep::before, .sep::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.sep span { font-family: var(--ff-display); font-style: italic; color: var(--muted); font-size: 0.95rem; white-space: nowrap; }
+
+/* ── Type guide ── */
+.guide-h { font-family: var(--ff-display); font-size: 1.9rem; font-weight: 500; color: var(--fern); margin: 0 0 5px; text-wrap: balance; }
+.guide-sub { color: var(--muted); font-size: 13.5px; margin: 0 0 28px; }
+.cards { display: flex; flex-direction: column; gap: 16px; }
+.card { display: grid; grid-template-columns: 130px 1fr; background: var(--surface); border-radius: 10px; border: 1px solid var(--border); overflow: hidden; }
+@media (max-width: 520px) { .card { grid-template-columns: 1fr; } }
+
+/* Image slot */
+.card-img {
+  background: var(--fennel);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 7px; padding: 20px; min-height: 115px;
+  cursor: pointer; position: relative; overflow: hidden;
+}
+.card-img:hover .card-overlay { opacity: 1; }
+.card-ph-wrap { display: flex; flex-direction: column; align-items: center; gap: 7px; }
+.card-ico { font-size: 2rem; opacity: 0.3; }
+.card-ph  { font-size: 10.5px; color: var(--muted); text-align: center; line-height: 1.5; }
+.card-img img.uploaded { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.card-overlay {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: rgba(0,0,0,0.45); color: #fff;
+  font-size: 11px; text-align: center; padding: 5px 0;
+  opacity: 0; transition: opacity 0.18s;
+}
+
+.card-body { padding: 16px 20px; }
+@media (max-width: 520px) { .card-body { padding: 16px; } }
+.badge { display: inline-block; background: var(--fennel); color: var(--fern); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; padding: 2px 9px; border-radius: 20px; margin-bottom: 7px; }
+.card-name { font-family: var(--ff-display); font-size: 1.15rem; font-weight: 600; color: var(--ink); margin: 0 0 5px; }
+.card-desc { font-size: 13px; color: var(--muted); margin: 0; line-height: 1.65; }
+</style>
+
+<div class="page">
+
+  <header class="brand-header">
+    <div>
+      <p class="brand-name">Réka rajza</p>
+      <p class="brand-tag">gyermekkönyv-illusztráció</p>
+    </div>
+    <div class="doc-label">
+      <span>Dokumentum</span>
+      <span>Árajánlat</span>
+    </div>
+  </header>
+
+  <div class="sec">Projekt adatok</div>
+  <div class="grid2">
+    <div class="field">
+      <label>Megrendelő neve</label>
+      <input type="text" placeholder="Pl. Nagy Kiadó Kft.">
+    </div>
+    <div class="field">
+      <label>Dátum</label>
+      <input type="date" id="doc-date">
+    </div>
+    <div class="field">
+      <label>Könyv / projekt neve</label>
+      <input type="text" placeholder="Pl. A kis zöld béka kalandjai">
+    </div>
+    <div class="field">
+      <label>Tervezett oldalszám</label>
+      <input type="text" placeholder="Pl. 32 oldal">
+    </div>
+    <div class="field full">
+      <label>Projektleírás / megjegyzés</label>
+      <textarea placeholder="Rövid leírás a projektről, stílusról, hangvételről..."></textarea>
+    </div>
+  </div>
+
+  <div class="sec">Illusztrációk és árak</div>
+  <div class="tbl-wrap">
+    <table id="ptbl">
+      <thead>
+        <tr>
+          <th>Típus</th>
+          <th class="c">Db</th>
+          <th class="r">Egységár</th>
+          <th class="r">Összesen</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <span class="tn">Vignetta</span>
+            <span class="ts">Egyetlen tárgy vagy karakter, háttér és körítés nélkül</span>
+          </td>
+          <td class="c"><input type="number" class="qty" min="0" value="0" data-i="0"></td>
+          <td class="r"><input type="number" class="unit" min="0" value="0" data-i="0">&nbsp;Ft</td>
+          <td class="r rt" id="r0">—</td>
+        </tr>
+        <tr>
+          <td>
+            <span class="tn">Kisillusztráció</span>
+            <span class="ts">Karakter vagy tárgy minimális körítéssel, egyszerű háttér (max. 1 karakter)</span>
+          </td>
+          <td class="c"><input type="number" class="qty" min="0" value="0" data-i="1"></td>
+          <td class="r"><input type="number" class="unit" min="0" value="0" data-i="1">&nbsp;Ft</td>
+          <td class="r rt" id="r1">—</td>
+        </tr>
+        <tr>
+          <td>
+            <span class="tn">Egyoldalas illusztráció</span>
+            <span class="ts">Teljes oldal, színes, részletes, teljes háttér (max. 3 karakter)</span>
+          </td>
+          <td class="c"><input type="number" class="qty" min="0" value="0" data-i="2"></td>
+          <td class="r"><input type="number" class="unit" min="0" value="0" data-i="2">&nbsp;Ft</td>
+          <td class="r rt" id="r2">—</td>
+        </tr>
+        <tr>
+          <td>
+            <span class="tn">Duplaoldalas illusztráció</span>
+            <span class="ts">Mindkét oldalt átölelő jelenet, színes, részletes, teljes háttér (max. 4 karakter)</span>
+          </td>
+          <td class="c"><input type="number" class="qty" min="0" value="0" data-i="3"></td>
+          <td class="r"><input type="number" class="unit" min="0" value="0" data-i="3">&nbsp;Ft</td>
+          <td class="r rt" id="r3">—</td>
+        </tr>
+        <tr>
+          <td>
+            <span class="tn">Panoráma sáv <span style="font-weight:400;color:var(--muted)">(1 oldalas)</span></span>
+            <span class="ts">Az oldal alján végigfutó jelenetsáv, háttér nélkül (max. 3 karakter)</span>
+          </td>
+          <td class="c"><input type="number" class="qty" min="0" value="0" data-i="4"></td>
+          <td class="r"><input type="number" class="unit" min="0" value="0" data-i="4">&nbsp;Ft</td>
+          <td class="r rt" id="r4">—</td>
+        </tr>
+        <tr>
+          <td>
+            <span class="tn">Panoráma sáv <span style="font-weight:400;color:var(--muted)">(2 oldalas)</span></span>
+            <span class="ts">Mindkét oldalon végigfutó jelenetsáv, háttér nélkül (max. 5 karakter)</span>
+          </td>
+          <td class="c"><input type="number" class="qty" min="0" value="0" data-i="5"></td>
+          <td class="r"><input type="number" class="unit" min="0" value="0" data-i="5">&nbsp;Ft</td>
+          <td class="r rt" id="r5">—</td>
+        </tr>
+        <tr class="sub">
+          <td>
+            <span class="tn">Plusz karakter felár</span>
+            <span class="ts">Az egész könyvre vonatkozó karakterfelár összesítve</span>
+          </td>
+          <td class="c"><input type="number" class="qty" min="0" value="0" data-i="6"></td>
+          <td class="r"><input type="number" class="unit" min="0" value="0" data-i="6">&nbsp;Ft</td>
+          <td class="r rt" id="r6">—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="grand">
+    <span class="grand-lbl">Végösszeg</span>
+    <span class="grand-amt" id="grand">0 Ft</span>
+  </div>
+
+  <div class="sec" style="margin-top:28px;">Feltételek</div>
+  <div class="grid2">
+    <div class="field">
+      <label>Átdolgozási körök</label>
+      <input type="text" placeholder="Pl. 2 kör vázlat + 1 kör végleges">
+    </div>
+    <div class="field">
+      <label>Határidő</label>
+      <input type="text" placeholder="Pl. 2025. március 31.">
+    </div>
+    <div class="field">
+      <label>Felhasználási jog</label>
+      <input type="text" placeholder="Pl. kizárólagos kiadói jog, Magyarország">
+    </div>
+    <div class="field">
+      <label>Fizetési feltételek</label>
+      <input type="text" placeholder="Pl. 50% előleg, 50% átadáskor">
+    </div>
+    <div class="field full">
+      <label>Egyéb megjegyzés</label>
+      <textarea placeholder="Különleges kikötések, technikai elvárások..."></textarea>
+    </div>
+  </div>
+
+  <div class="validity">
+    <span>⏳</span>
+    <span>Az árajánlat érvényes:</span>
+    <input type="date" id="valid-to">
+    <span>-ig.</span>
+  </div>
+
+  <div class="sig-row">
+    <div>
+      <div class="sig-line"></div>
+      <div class="sig-cap">Megrendelő aláírása</div>
+    </div>
+    <div>
+      <div class="sig-line"></div>
+      <div class="sig-cap">Réka J. Kiss – Réka rajza</div>
+    </div>
+  </div>
+
+  <div class="sep"><span>Illusztrációtípusok ismertetője</span></div>
+
+  <h2 class="guide-h">Illusztrációtípusok</h2>
+  <p class="guide-sub">Az alábbi útmutató segít eligazodni, melyik illusztrációtípus illik legjobban a könyv igényeihez. A képekre kattintva saját példaképet tölthetsz fel.</p>
+
+  <div class="cards">
+
+    <div class="card">
+      <div class="card-img" data-slot="0">
+        <div class="card-ph-wrap">
+          <div class="card-ico">🖼</div>
+          <div class="card-ph">Kattints a kép<br>feltöltéséhez</div>
+        </div>
+        <img class="uploaded" src="" alt="" hidden>
+        <div class="card-overlay">📷 Csere</div>
+      </div>
+      <div class="card-body">
+        <span class="badge">Vignetta</span>
+        <h3 class="card-name">Vignetta</h3>
+        <p class="card-desc">Egyetlen tárgy vagy karakter rajza minden körítés és háttér nélkül. Szöveg mellé, fejlécként vagy oldaldíszként ideális. Egyszerű kivitelezés, de nagy vizuális hatás.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-img" data-slot="1">
+        <div class="card-ph-wrap">
+          <div class="card-ico">🖼</div>
+          <div class="card-ph">Kattints a kép<br>feltöltéséhez</div>
+        </div>
+        <img class="uploaded" src="" alt="" hidden>
+        <div class="card-overlay">📷 Csere</div>
+      </div>
+      <div class="card-body">
+        <span class="badge">Kisillusztráció</span>
+        <h3 class="card-name">Kisillusztráció</h3>
+        <p class="card-desc">Egy karakter vagy tárgy minimális körítéssel: kis díszítőelemek, egyszerű háttér. Az oldal egy részét foglalja el, a szöveg mellett kap helyet. Mozgalmas, de nem tolakodó.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-img" data-slot="2">
+        <div class="card-ph-wrap">
+          <div class="card-ico">🖼</div>
+          <div class="card-ph">Kattints a kép<br>feltöltéséhez</div>
+        </div>
+        <img class="uploaded" src="" alt="" hidden>
+        <div class="card-overlay">📷 Csere</div>
+      </div>
+      <div class="card-body">
+        <span class="badge">Egyoldalas</span>
+        <h3 class="card-name">Egyoldalas illusztráció</h3>
+        <p class="card-desc">A könyv egy teljes oldalát elfoglaló, részletes, színes, teljes hátterű kép. Fordulópontoknál és érzelmileg hangsúlyos pillanatokban a legerősebb hatású.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-img" data-slot="3">
+        <div class="card-ph-wrap">
+          <div class="card-ico">🖼</div>
+          <div class="card-ph">Kattints a kép<br>feltöltéséhez</div>
+        </div>
+        <img class="uploaded" src="" alt="" hidden>
+        <div class="card-overlay">📷 Csere</div>
+      </div>
+      <div class="card-body">
+        <span class="badge">Duplaoldalas</span>
+        <h3 class="card-name">Duplaoldalas illusztráció</h3>
+        <p class="card-desc">A könyv mindkét oldalát átölelő, nagyszabású jelenet, színes, részletes, teljes háttérrel. A leglenyűgözőbb típus – kulcsjelenetekhez, bevezető vagy záró oldalakhoz ajánlott.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-img" data-slot="4">
+        <div class="card-ph-wrap">
+          <div class="card-ico">🖼</div>
+          <div class="card-ph">Kattints a kép<br>feltöltéséhez</div>
+        </div>
+        <img class="uploaded" src="" alt="" hidden>
+        <div class="card-overlay">📷 Csere</div>
+      </div>
+      <div class="card-body">
+        <span class="badge">Panoráma sáv</span>
+        <h3 class="card-name">Panoráma sáv</h3>
+        <p class="card-desc">Az oldal (vagy két egymást követő oldal) alján végigfutó vízszintes jelenetsáv, háttér nélkül. Szereplők és tárgyak sorakoznak egymás után – mozgást, folyamatot közvetít anélkül, hogy a szöveget elfedné.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<input type="file" id="img-input" accept="image/*" hidden>
+
+<script>
+// ── Dates ──
+(function () {
+  const pad = n => String(n).padStart(2, '0');
+  const fmt = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  const today = new Date();
+  document.getElementById('doc-date').value = fmt(today);
+  const v = new Date(today); v.setDate(v.getDate() + 30);
+  document.getElementById('valid-to').value = fmt(v);
+})();
+
+// ── Pricing calc ──
+function ft(n) { return n.toLocaleString('hu-HU') + ' Ft'; }
+function recalc() {
+  let grand = 0;
+  for (let i = 0; i < 7; i++) {
+    const qty  = parseInt(document.querySelector(`.qty[data-i="${i}"]`).value,  10) || 0;
+    const unit = parseInt(document.querySelector(`.unit[data-i="${i}"]`).value, 10) || 0;
+    const row  = qty * unit;
+    grand += row;
+    document.getElementById('r' + i).textContent = row > 0 ? ft(row) : '—';
+  }
+  document.getElementById('grand').textContent = ft(grand);
+}
+document.getElementById('ptbl').addEventListener('input', recalc);
+recalc();
+
+// ── Image upload ──
+const fileInput = document.getElementById('img-input');
+let activeSlot = -1;
+
+function showImage(slot, src) {
+  const el = document.querySelector(`.card-img[data-slot="${slot}"]`);
+  if (!el) return;
+  el.querySelector('.card-ph-wrap').hidden = true;
+  const img = el.querySelector('img.uploaded');
+  img.src = src;
+  img.hidden = false;
+}
+
+// Load saved images
+for (let i = 0; i < 5; i++) {
+  try {
+    const saved = localStorage.getItem('rr_img_' + i);
+    if (saved) showImage(i, saved);
+  } catch(e) {}
+}
+
+// Click to upload
+document.querySelectorAll('.card-img[data-slot]').forEach(el => {
+  el.addEventListener('click', () => {
+    activeSlot = parseInt(el.dataset.slot);
+    fileInput.value = '';
+    fileInput.click();
+  });
+});
+
+fileInput.addEventListener('change', () => {
+  const file = fileInput.files[0];
+  if (!file || activeSlot < 0) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const src = e.target.result;
+    showImage(activeSlot, src);
+    try { localStorage.setItem('rr_img_' + activeSlot, src); } catch(e) {}
+  };
+  reader.readAsDataURL(file);
+});
+</script>
