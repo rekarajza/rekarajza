@@ -567,7 +567,6 @@ function getFormData() {
       qty:  document.querySelector(`.qty[data-i="${i}"]`)?.value  || '0',
       unit: document.querySelector(`.unit[data-i="${i}"]`)?.value || '0',
     })),
-    texts: getEditableText(),
   };
 }
 
@@ -591,7 +590,6 @@ function setFormData(data) {
     if (q) q.value = row.qty;
     if (u) u.value = row.unit;
   });
-  if (data.texts) setEditableText(data.texts);
   recalc();
 }
 
