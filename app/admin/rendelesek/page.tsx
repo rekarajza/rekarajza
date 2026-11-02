@@ -92,7 +92,8 @@ export default function Rendelesek() {
         </div>
       ) : (
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[800px]">
             <thead className="bg-fennel text-dark/60">
               <tr>
                 <th className="text-left px-6 py-3">Dátum</th>
@@ -197,6 +198,7 @@ export default function Rendelesek() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 
