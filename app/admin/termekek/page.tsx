@@ -50,6 +50,7 @@ export default function Termekek() {
   const [extraImageFiles, setExtraImageFiles] = useState<File[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [downloadPreviewUrl, setDownloadPreviewUrl] = useState<string | null>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const imageRef = useRef<HTMLInputElement>(null);
@@ -70,6 +71,14 @@ export default function Termekek() {
       el.focus();
       el.setSelectionRange(start + marker.length, end + marker.length);
     }, 0);
+  };
+
+  const loadDownloadPreview = async (fileUrl: string) => {
+    if (!fileUrl) { setDownloadPreviewUrl(null); return; }
+    const ext = fileUrl.split('.').pop()?.toLowerCase();
+    if (!['jpg', 'jpeg', 'png'].includes(ext ?? '')) { setDownloadPreviewUrl(null); return; }
+    const { data } = await supabase.storage.from('product-files').createSignedUrl(fileUrl, 300);
+    setDownloadPreviewUrl(data?.signedUrl ?? null);
   };
 
   const load = async () => {
@@ -108,6 +117,7 @@ export default function Termekek() {
     setImageFile(null);
     setDownloadFile(null);
     setExtraImageFiles([]);
+    setDownloadPreviewUrl(null);
     setError('');
     setShowForm(true);
   };
@@ -120,6 +130,7 @@ export default function Termekek() {
     setExtraImageFiles([]);
     setError('');
     setShowForm(true);
+    loadDownloadPreview(p.file_url ?? '');
   };
 
   const uploadFile = async (file: File, bucket: string, folder: string) => {
@@ -480,7 +491,16 @@ export default function Termekek() {
               <div>
                 <label className="text-sm font-semibold text-dark block mb-2">Letölthető fájl (amit a vevő megkap)</label>
                 {form.file_url && !downloadFile && (
-                  <p className="text-xs text-fern mb-2">✓ Fájl már feltöltve</p>
+                  <div className="mb-3">
+                    {downloadPreviewUrl ? (
+                      <div className="relative inline-block">
+                        <img src={downloadPreviewUrl} alt="Letölthető fájl előnézet" className="w-40 h-40 object-cover rounded-xl border-2 border-fern/30" />
+                        <span className="absolute bottom-1 left-1 bg-dark/70 text-white text-xs px-2 py-0.5 rounded-lg">Letölthető fájl</span>
+                      </div>
+                    ) : (
+                      <p className="text-xs text-fern">✓ Fájl feltöltve: {form.file_url.split('/').pop()}</p>
+                    )}
+                  </div>
                 )}
                 {downloadFile && (
                   <p className="text-xs text-fern mb-2">Kiválasztva: {downloadFile.name}</p>
